@@ -1,0 +1,78 @@
+﻿<UserControl x:Class="AmbireStudentSilverlightApplication.MainPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d"
+    d:DesignHeight="560" d:DesignWidth="540">
+    <UserControl.Resources>
+        <BitmapImage x:Key="ActivityIcon" UriSource="activity.png" />
+        <BitmapImage x:Key="WarningIcon" UriSource="warning.png" />
+        <BitmapImage x:Key="StopIcon" UriSource="stop.png" />
+        <BitmapImage x:Key="GoIcon" UriSource="go.png" />
+    </UserControl.Resources>
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+        <MediaElement Name="mediaPlayer" Visibility="Collapsed" />
+        <Grid>
+            <Grid.ColumnDefinitions>
+                <ColumnDefinition Width="Auto" />
+            </Grid.ColumnDefinitions>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="*" />
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+            <Rectangle Name="currentFrame" Fill="White" Width="500" Height="400" Grid.Column="0" Grid.Row="0" />
+            <Grid Grid.Row="1" Grid.Column="0" Margin="0,10,0,5">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                    <RowDefinition Height="Auto" />
+                </Grid.RowDefinitions>
+                <TextBlock Grid.Row="0" Grid.Column="0" Margin="2,2,2,2">Name:</TextBlock>
+                <TextBox Name="nameTextField" Grid.Row="0" Grid.Column="1" Margin="2,2,2,2" TextChanged="nameTextField_TextChanged"></TextBox>
+                <TextBlock Grid.Row="1" Grid.Column="0" Margin="2,2,2,2">PIN:</TextBlock>
+                <TextBox Name="pinTextField" Grid.Row="1" Grid.Column="1" Margin="2,2,2,2" TextChanged="pinTextField_TextChanged"></TextBox>
+                <Grid Name="warningPanel" Grid.Row="2" Grid.Column="1" Margin="2,2,2,2" MinHeight="24">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto" />
+                    </Grid.RowDefinitions>
+                    <Image Name="reasonIcon" Grid.Row="0" Grid.Column="0" Source="{StaticResource GoIcon}" Width="24" Height="24" />
+                    <TextBlock Name="reasonTextField" Grid.Row="0" Grid.Column="1" Margin="2" VerticalAlignment="Center">Type your name and PIN to connect to the Ambire cloud.</TextBlock>
+                </Grid>
+            </Grid>
+            <Grid Grid.Row="2" Grid.Column="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="40" />
+                </Grid.RowDefinitions>
+                <Button Name="screenshotButton" Grid.Column="0" Margin="5,5,5,5" Grid.Row="1" Click="screenshotButton_Click" IsEnabled="False">Screenshot</Button>
+                <Button Name="webcamButton" Grid.Column="1" Margin="5,5,5,5" Grid.Row="1" Click="webcamButton_Click" Visibility="Visible" IsEnabled="False">Webcam</Button>
+                <Grid Name="webcamControlPanel" Grid.Column="1" Grid.Row="1" Visibility="Collapsed">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
+                    <Button Name="takePictureButton" Grid.Column="0" Grid.Row="0" Margin="5,5,1,5" Click="takePictureButton_Click" IsEnabled="True">Take Picture</Button>
+                    <Button Name="cancelWebcamButton" Grid.Column="1" Grid.Row="0" Margin="1,5,5,5" Click="cancelWebcamButton_Click" IsEnabled="True">Cancel</Button>
+                </Grid>
+                <Button Name="uploadButton" Grid.Column="2" Margin="5,5,5,5" Grid.Row="1" Click="uploadButton_Click" IsEnabled="False">Upload</Button>
+            </Grid>
+        </Grid>
+    </StackPanel>
+</UserControl>

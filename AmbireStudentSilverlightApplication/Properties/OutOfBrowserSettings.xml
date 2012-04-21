@@ -1,0 +1,15 @@
+<OutOfBrowserSettings ShortName="Ambire" EnableGPUAcceleration="True" ShowInstallMenuItem="True">
+  <OutOfBrowserSettings.Blurb>Ambire lets students post screenshots, pictures taken with a webcam, and image files to an ambient wall display.</OutOfBrowserSettings.Blurb>
+  <OutOfBrowserSettings.WindowSettings>
+    <WindowSettings Title="Ambire" />
+  </OutOfBrowserSettings.WindowSettings>
+  <OutOfBrowserSettings.SecuritySettings>
+    <SecuritySettings ElevatedPermissions="Required" />
+  </OutOfBrowserSettings.SecuritySettings>
+  <OutOfBrowserSettings.Icons>
+    <Icon Size="16,16">ambire-16x16-24bpp.png</Icon>
+    <Icon Size="32,32">ambire-32x32-24bpp.png</Icon>
+    <Icon Size="48,48">ambire-48x48-24bpp.png</Icon>
+    <Icon Size="128,128">ambire-128x128-24bpp.png</Icon>
+  </OutOfBrowserSettings.Icons>
+</OutOfBrowserSettings>
