@@ -94,16 +94,21 @@ namespace AmbireStudentSilverlightApplication
 
         void MainPage_Loaded(object sender, RoutedEventArgs e)
         {
-            StreamResourceInfo res = Application.GetResourceStream(new Uri("/AmbireStudentSilverlightApplication;component/ambire.jpg", UriKind.Relative));
-            BitmapImage g = new BitmapImage();
-            g.SetSource(res.Stream);
-            m_garbageFrame = new WriteableBitmap(g);
-            DispatcherTimer taskTimer = new DispatcherTimer();
-            taskTimer.Interval = new TimeSpan(0, 0, 1);
-            taskTimer.Tick += new EventHandler(taskTimer_Tick);
-            taskTimer.Start();
-            SetReason(Reason.MissingInfo);
-            SetMode(Mode.Disconnected, true);
+            if (Application.Current.IsRunningOutOfBrowser)
+            {
+                inBrowserPanel.Visibility = System.Windows.Visibility.Collapsed;
+                outOfBrowserPanel.Visibility = System.Windows.Visibility.Visible;
+                StreamResourceInfo res = Application.GetResourceStream(new Uri("/AmbireStudentSilverlightApplication;component/ambire.jpg", UriKind.Relative));
+                BitmapImage g = new BitmapImage();
+                g.SetSource(res.Stream);
+                m_garbageFrame = new WriteableBitmap(g);
+                DispatcherTimer taskTimer = new DispatcherTimer();
+                taskTimer.Interval = new TimeSpan(0, 0, 1);
+                taskTimer.Tick += new EventHandler(taskTimer_Tick);
+                taskTimer.Start();
+                SetReason(Reason.MissingInfo);
+                SetMode(Mode.Disconnected, true);
+            }
         }
 
         void taskTimer_Tick(object sender, EventArgs e)
