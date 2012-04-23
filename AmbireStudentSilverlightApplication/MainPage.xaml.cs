@@ -51,6 +51,7 @@ using System.Threading.Tasks;
 
 namespace AmbireStudentSilverlightApplication
 {
+    [System.Security.SecuritySafeCritical]
     public partial class MainPage : UserControl
     {
 
@@ -82,8 +83,8 @@ namespace AmbireStudentSilverlightApplication
         private DateTime m_verification = DateTime.MinValue;
         private DateTime m_screenshot = DateTime.MinValue;
         private static readonly long REVERIFY_INTERVAL_MILLIS = 5 * 60 * 1000;
-        private static readonly long SCREENSHOT_INTERVAL_MILLIS = 18 * 1000;
-        private string m_baseUrl = "http://localhost:8081/";
+        private static readonly long SCREENSHOT_INTERVAL_MILLIS = 2 * 60 * 1000;
+        private string m_baseUrl = "http://ambire.itec.smartlabs.mobi:8081/";
         private string m_uniqueIdentifier = Guid.NewGuid().ToString();
         public MainPage()
         {
@@ -221,8 +222,17 @@ namespace AmbireStudentSilverlightApplication
                 if (!e.Success)
                 {
                     PlaySound("error");
+                    SetMode(Mode.Disconnected);
+                    if (e.Response != null && e.Response.StatusCode == HttpStatusCode.NotFound)
+                    {
+                        SetReason(Reason.Rejected);
+                    }
+                    else
+                    {
+                        SetReason(Reason.NoConnection);
+                    }
                 }
-            }, Dispatcher /*, new FileStream("C:\\Developer\\Desktop\\logger.txt", FileMode.Create, FileAccess.ReadWrite, FileShare.Read) */);
+            }, Dispatcher);
         }
 
         void SetCurrentFrame(WriteableBitmap bmp, string fileName)
@@ -319,7 +329,7 @@ namespace AmbireStudentSilverlightApplication
 
         private void screenshotButton_Click(object sender, RoutedEventArgs e)
         {
-            SetMode(Mode.Screenshot);
+            SetMode(Mode.Screenshot, true);
         }
 
         private void webcamButton_Click(object sender, RoutedEventArgs e)
@@ -335,7 +345,7 @@ namespace AmbireStudentSilverlightApplication
             ofd.Multiselect = true;
             if(ofd.ShowDialog() == true)
             {
-                SetMode(Mode.Upload);
+                SetMode(Mode.Upload, true);
                 foreach (FileInfo fi in ofd.Files)
                 {
                     UploadFile(fi);

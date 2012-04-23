@@ -116,6 +116,7 @@ namespace AmbireStudentSilverlightApplication
         }
 
         [DllImport("gdi32.dll")]
+        [System.Security.SecuritySafeCritical]
         private static extern IntPtr CreateDIBSection(IntPtr hdc, ref BITMAPINFOHEADER bmi, uint iUsage, out IntPtr ppvBits, IntPtr hSection, uint dwOffset);
 
         [DllImport("gdi32.dll")]
@@ -123,6 +124,7 @@ namespace AmbireStudentSilverlightApplication
         private static extern bool DeleteObject(IntPtr hgdiobj);
 
         [DllImport("user32.dll")]
+        [System.Security.SecuritySafeCritical]
         private static extern IntPtr MonitorFromPoint(POINT pt, MonitorOptions options);
 
         [DllImport("user32.dll")]
@@ -152,6 +154,7 @@ namespace AmbireStudentSilverlightApplication
         [return: MarshalAs(UnmanagedType.Bool)]
         private static extern bool DeleteDC(IntPtr hdc);
 
+        [System.Security.SecuritySafeCritical]
         public static WriteableBitmap Capture()
         {
             try
@@ -222,8 +225,13 @@ namespace AmbireStudentSilverlightApplication
                     }
                 }
             }
-            catch(Exception)
+            catch(Exception e)
             {
+                for (Exception r = e; r != null; r = r.InnerException)
+                {
+                    Debug.WriteLine(r.Message);
+                    Debug.WriteLine(r.StackTrace);
+                }
                 return null;
             }
         }

@@ -30,52 +30,32 @@
 <!DOCTYPE html>
 <html>
 <head>
-<title>Welcome to Ambire</title>
+<title>Ambire</title>
 <style type="text/css">
 body {
+	font-family: Calibri, sans serif;
+	color: #555;
 }
-div.students {
-	position: absolute;
-	left: 10px;
-	top: 10px;
-	right: 50%;
-	bottom: 10px;
-	font-family: sans-serif;
-	right-border: 1px solid blue;
-	background-color: white;
-	padding-left: 5%;
-	padding-top: 15%;
-	border-right: 2px ridge silver;
-}
-div.teachers {
-	position: absolute;
-	left: 50%;
-	top: 10px;
-	right: 10px;
-	bottom: 10px;
-	padding-left: 5%;
-	padding-top: 15%;
-	font-family: serif;
-	border: none;
-	background-color: black;
-	font-family: sans-serif;
-	color: white;
+td {
+	vertical-align: top;
 }
 </style>
-<script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
 </head>
 <body>
-<div class="students">
+<p style="width: 820px; text-align: center;"><img src="img/ambire.jpg" width="500" height="400" /></p>
+<table>
+<tr><td style="width: 400px; border-right: 1px solid #aaa; padding-right: 10px">
 <h1>Students</h1>
-<p>Click the icon below to launch the Ambire Student Application.</p>
-<a href="AmbireStudentJavaApplication.jnlp"><img style="border: none" src="http://www.oracle.com/ocom/groups/public/@ocom/documents/digitalasset/1527441.jpg" /></a>
-</div>
-<div class="teachers">
+<p>Click an icon below to launch the Ambire Student Application.</p>
+<a href="AmbireStudentSilverlightApplication.xap"><img style="border: none" src="img/silverlight.jpg" width="53" height="53"/></a>
+<a href="AmbireStudentJavaApplication.jnlp"><img style="border: none" src="img/java.jpg" width="53" height="53" /></a>
+</td><td style="width: 400px; padding-left: 10px">
 <h1>Teachers</h1>
-<p>Sign in with your @gmail.com or @yahoo.com email address below.</p>
+<p>Sign in with your @gmail.com or @yahoo.com email address.</p>
 <form action="/login" method="POST">
 <p style="vertical-align: middle"><label for="email">Email:</label>&nbsp;<input type="text" name="email" width="40" /> <input type="submit" value="Sign In" /></p>
 </form>
-</div>
+</td></tr>
+</table>
 </body>
 </html>
