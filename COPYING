@@ -1,5 +1,259 @@
-The ambire "student" logo is from the public domain. See http://openclipart.org/detail/152347/student-by-b.gaultier for source.
+The ambire*.png icon and its use in ambire.jpg is from the public domain. See
+http://openclipart.org/detail/152347/student-by-b.gaultier for source.
 
-The "error" sound file is from the public domain. See http://www.freesound.org/people/JOJOKYRA/sounds/78872/ for source.
+-=-=-
 
-The "shutter" sound file is from the public domain. See http://www.freesound.org/people/Heigh-hoo/sounds/16071/ for source.
+The error.mp3 sound file is from the public domain. See
+http://www.freesound.org/people/JOJOKYRA/sounds/78872/ for source.
+
+-=-=-
+
+The shutter.mp3 sound file is from the public domain. See
+http://www.freesound.org/people/Heigh-hoo/sounds/16071/ for source.
+
+-=-=-
+
+The go.png icon is from the public domain. See
+http://openclipart.org/detail/30409/tango-go-next-by-warszawianka for source.
+
+-=-=-
+
+The stop.png icon is from the public domain. See
+http://openclipart.org/detail/34267/tango-process-stop-by-warszawianka for source.
+
+-=-=-
+
+The warning.png icon is from the public domain. See
+http://openclipart.org/detail/35503/tango-emblem-important-by-warszawianka for source.
+
+-=-=-
+
+The activity.png icon is from the public domain See
+http://openclipart.org/detail/35389/tango-applications-internet-by-warszawianka for source.
+
+-=-=-
+
+The WriteableBitmapEx library is licensed under the Microsoft Public License (Ms-Pl).
+See http://writeablebitmapex.codeplex.com/ for details.
+
+-=-=-
+
+Portions of this software use the FluxJpeg library licensed under the following terms:
+Copyright (c) 2008-2009 Occipital Open Source
+
+Partial derivations: See IJG.txt and JAI.txt.
+
+Permission is hereby granted, free of charge, to any person
+obtaining a copy of this software and associated documentation
+files (the "Software"), to deal in the Software without
+restriction, including without limitation the rights to use,
+copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the
+Software is furnished to do so, subject to the following
+conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES
+OF MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT
+HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY,
+WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING
+FROM, OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR
+OTHER DEALINGS IN THE SOFTWARE. 
+
+-=-=-
+
+Portions of this software use the Jackson Java JSON processor licensed under the Apache License
+2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the Apache HttpComponents library licensed under the Apache
+License 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the Java Media Framework licensed by Oracle.
+
+-=-=-
+
+Portions of this software use the Java MP3 Plugin licensed by Oracle.
+
+-=-=-
+
+Portions of this software use the Google Guice library licensed under the Apache License 2.0
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the openid4java library licensed under the Apache License 2.0
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the Apache Xerces Java XML Processor licensed under the Apache
+Licenese 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the CyberNeko HTML Parser licensed under the Apache License 2.0
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the Amazon Web Services SDK for Java licensed under the Apache
+License 2.0 (http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the aspectj library licensed under the Eclipse Public License Version
+1.0 (http://www.eclipse.org/legal/epl-v10.html).
+
+-=-=-
+
+Portions of this software use the FreeMarker library under the following license terms:
+FreeMarker 1.x was released under the LGPL license. Later, by community
+consensus, we have switched over to a BSD-style license. As of FreeMarker
+2.2pre1, the original author, Benjamin Geer, has relinquished the copyright in
+behalf of Visigoth Software Society. The current copyright holder is the
+Visigoth Software Society.
+
+------------------------------------------------------------------------------
+Copyright (c) 2003 The Visigoth Software Society. All rights reserved.
+
+Redistribution and use in source and binary forms, with or without
+modification, are permitted provided that the following conditions are met:
+
+1.  Redistributions of source code must retain the above copyright notice,
+    this list of conditions and the following disclaimer.
+
+2.  The end-user documentation included with the redistribution, if any, must
+    include the following acknowlegement:
+      "This product includes software developed by the 
+      Visigoth Software Society (http://www.visigoths.org/)."
+    Alternately, this acknowlegement may appear in the software itself, if and
+    wherever such third-party acknowlegements normally appear.
+
+3.  Neither the name "FreeMarker", "Visigoth", nor any of the names of the
+    project contributors may be used to endorse or promote products derived
+    from this software without prior written permission. For written
+    permission, please contact visigoths@visigoths.org.
+
+4.  Products derived from this software may not be called "FreeMarker" or
+    "Visigoth" nor may "FreeMarker" or "Visigoth" appear in their names
+    without prior written permission of the Visigoth Software Society.
+
+THIS SOFTWARE IS PROVIDED ``AS IS'' AND ANY EXPRESSED OR IMPLIED WARRANTIES,
+INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE
+VISIGOTH SOFTWARE SOCIETY OR ITS CONTRIBUTORS BE LIABLE FOR ANY DIRECT,
+INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR CONSEQUENTIAL DAMAGES (INCLUDING,
+BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR SERVICES; LOSS OF USE,
+DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY THEORY
+OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING
+NEGLIGENCE OR OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,
+EVEN IF ADVISED OF THE POSSIBILITY OF SUCH DAMAGE.
+------------------------------------------------------------------------------
+
+This software consists of voluntary contributions made by many individuals on
+behalf of the Visigoth Software Society. For more information on the Visigoth
+Software Society, please see http://www.visigoths.org/
+
+------------------------------------------------------------------------------
+
+FREEMARKER SUBCOMPONENTS UNDER DIFFERENT LICENSE: 
+
+FreeMarker includes a number of subcomponents that are licensed by the Apache
+Software Foundation under the Apache License, Version 2.0. Your use of these
+subcomponents is subject to the terms and conditions of the Apache License,
+Version 2.0. You may obtain a copy of the License at
+
+    http://www.apache.org/licenses/LICENSE-2.0
+    
+The subcomponents under this licence are the following files, which are
+included both in freemarker.jar and in the source code:
+  
+    freemarker/ext/jsp/web-app_2_2.dtd
+    freemarker/ext/jsp/web-app_2_3.dtd
+    freemarker/ext/jsp/web-app_2_4.xsd
+    freemarker/ext/jsp/web-app_2_5.xsd
+    freemarker/ext/jsp/web-jsptaglibrary_1_1.dtd
+    freemarker/ext/jsp/web-jsptaglibrary_1_2.dtd
+    freemarker/ext/jsp/web-jsptaglibrary_2_0.xsd
+    freemarker/ext/jsp/web-jsptaglibrary_2_1.xsd  
+    
+-=-=-
+
+Portions of this software use the MySQL Connector/J licensed under the GNU General Public License,
+version 2 (http://www.gnu.org/licenses/old-licenses/gpl-2.0.txt).
+
+-=-=-
+
+Portions of this software use the JavaMail API licensed by Oracle.
+
+-=-=-
+
+Portions of this software use the Spring Framework licensed under the Apache License 2.0
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+Portions of this software use the Java StAX XML Processor licensed by Oracle.
+
+-=-=-
+
+Portions of this software use J2EE licensed by Oracle.
+
+-=-=-
+
+Portions of this software use Apache Tomcat licensed under the Apache License 2.0
+(http://www.apache.org/licenses/LICENSE-2.0).
+
+-=-=-
+
+The logout.png icon is from the public domain. See
+http://openclipart.org/detail/34279/tango-system-log-out-by-warszawianka for source.
+
+-=-=-
+
+The play*.png icons are from the public domain. See
+http://openclipart.org/detail/31003/tango-media-start-by-warszawianka for source.
+
+-=-=-
+
+The left*.png and right*.png icons are from the public domain. See
+http://openclipart.org/detail/166862/go-next-orange-by-rygle for source.
+
+-=-=-
+
+The pause*.png icons are from the public domain. See
+http://openclipart.org/detail/166960/pause-orange-by-rygle for source.
+
+-=-=-
+
+Portions of this software use the jQuery library licensed under the following terms:
+Copyright (c) 2011 John Resig, http://jquery.com/
+
+Permission is hereby granted, free of charge, to any person obtaining
+a copy of this software and associated documentation files (the
+"Software"), to deal in the Software without restriction, including
+without limitation the rights to use, copy, modify, merge, publish,
+distribute, sublicense, and/or sell copies of the Software, and to
+permit persons to whom the Software is furnished to do so, subject to
+the following conditions:
+
+The above copyright notice and this permission notice shall be
+included in all copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
+EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
+MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
+NONINFRINGEMENT. IN NO EVENT SHALL THE AUTHORS OR COPYRIGHT HOLDERS BE
+LIABLE FOR ANY CLAIM, DAMAGES OR OTHER LIABILITY, WHETHER IN AN ACTION
+OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
+WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
+
+-=-=-
