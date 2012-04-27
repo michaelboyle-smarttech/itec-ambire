@@ -84,7 +84,7 @@ namespace AmbireStudentSilverlightApplication
         private DateTime m_screenshot = DateTime.MinValue;
         private static readonly long REVERIFY_INTERVAL_MILLIS = 5 * 60 * 1000;
         private static readonly long SCREENSHOT_INTERVAL_MILLIS = 2 * 60 * 1000;
-        private string m_baseUrl = "http://ambire.itec.smartlabs.mobi:8081/";
+        private string m_baseUrl = "http://ambire.itec.smartlabs.mobi/";
         private string m_uniqueIdentifier = Guid.NewGuid().ToString();
         public MainPage()
         {
