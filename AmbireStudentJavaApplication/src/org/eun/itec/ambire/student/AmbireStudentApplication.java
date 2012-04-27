@@ -125,7 +125,7 @@ public class AmbireStudentApplication implements Runnable {
 	private static final int WEBCAM_CAPTURE_TYPE = 1;
 	private static final int UPLOAD_CAPTURE_TYPE = 2;
 	private int m_captureType = SCREENSHOT_CAPTURE_TYPE;
-	private String m_baseUrl = "http://localhost:8081/";
+	private String m_baseUrl = "http://ambire.itec.smartlabs.mobi/";
 	private Date m_lastConnectionCheckDate;
 	private static long CHECK_CONNECTION_PERIOD_MILLISECONDS = 13000;
 	private String m_checking;
@@ -165,7 +165,7 @@ public class AmbireStudentApplication implements Runnable {
 			BasicService basic = (BasicService)ServiceManager.lookup("javax.jnlp.BasicService");
 			m_baseUrl = basic.getCodeBase().toExternalForm();
 		} catch (UnavailableServiceException e) {
-			m_baseUrl = "http://localhost:8081/";
+			m_baseUrl = "http://ambire.itec.smartlabs.mobi/";
 		}
 		createUserInterface();
 		setupTimer();

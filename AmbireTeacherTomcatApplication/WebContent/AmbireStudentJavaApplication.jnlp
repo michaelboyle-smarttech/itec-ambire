@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="http://ambire.itec.smartlabs.mobi/" href="AmbireStudentJavaApplication.jnlp">
+    <information>
+        <title>Ambire Student Java Application</title>
+        <vendor>iTEC</vendor>
+        <description>Lets students upload screenshots, webcam images, and picture files to the Ambire wall display in their classroom.</description>
+        <offline-allowed />
+    </information>
+    <security>
+    	<all-permissions />
+   	</security>
+   	<resources os="Windows" arch="x86">
+        <nativelib href="jmf-nativelib-win32.jar" />
+   	</resources>
+    <resources>
+        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
+        <jar href="AmbireStudentJavaApplication.jar" main="true" />
+    </resources>
+    <application-desc name="Ambire Student Java Application" main-class="org.eun.itec.ambire.student.AmbireStudentApplication" />
+    <update check="background" />
+</jnlp>                                   
