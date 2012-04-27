@@ -238,6 +238,7 @@ public class AmbireStudentApplication implements Runnable {
 	}
 	private void createUserInterface() {
 		m_frame = new JFrame("Ambire");
+		m_frame.getContentPane().setBackground(Color.WHITE);
 		m_frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
 		m_frame.getContentPane().setSize(MAX_IMAGE_WIDTH_PIXELS + MARGIN_LEFT + MARGIN_RIGHT, MAX_IMAGE_HEIGHT_PIXELS + MARGIN_TOP + MARGIN_BOTTOM + 4 * PADDING_Y + BUTTON_HEIGHT + INFO_PANEL_HEIGHT);
 		try {
@@ -274,8 +275,10 @@ public class AmbireStudentApplication implements Runnable {
 			e.printStackTrace();
 		}
 		JPanel outerPanel = new JPanel(new GridBagLayout());
+		outerPanel.setBackground(Color.WHITE);
 		outerPanel.add(m_currentImageLabel, new GridBagConstraints(0, 0, 3, 1, 0, 0, GridBagConstraints.CENTER, GridBagConstraints.NONE, new Insets(MARGIN_TOP, MARGIN_LEFT, PADDING_Y, MARGIN_RIGHT), 0, 0));
 		JPanel infoPanel = new JPanel(new GridBagLayout());
+		infoPanel.setBackground(Color.WHITE);
 		infoPanel.setPreferredSize(new Dimension(MAX_IMAGE_WIDTH_PIXELS, INFO_PANEL_HEIGHT));
 		infoPanel.add(new JLabel("Name:"), new GridBagConstraints(0, 0, 1, 1, 0, 0, GridBagConstraints.LINE_START, GridBagConstraints.NONE, new Insets(0, 0, PADDING_Y / 2, PADDING_X / 2), 0, 0));
 		infoPanel.add(m_nameTextField, new GridBagConstraints(1, 0, 1, 1, 1, 0, GridBagConstraints.LINE_START, GridBagConstraints.BOTH, new Insets(0, PADDING_X / 2, PADDING_Y / 2, 0), 0, 0));

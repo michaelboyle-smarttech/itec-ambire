@@ -39,7 +39,10 @@
 <title>Ambire</title>
 <style type="text/css">
 body {
-	background-color: Black;
+	background-color: white;
+	color: #555;
+	font-family: Calibri, Tahoma, sans-serif;
+	font-size: 40px;
 	margin: 0 0 0 0;
 	padding: 0 0 0 0;
 }
@@ -73,7 +76,7 @@ div#bottomButtons {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;
-	width: 120px;
+	width: 180px;
 	height: 60px;
 }
 span#pauseButton {
@@ -98,7 +101,19 @@ span#playButton {
 span#playButton:hover {
 	background-image: url(img/play-hot.png);
 }
+span#logoutButton {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	background-image: url(img/logout.png);
+	background-size: contain;
+}
+span#logoutButton:hover {
+	background-image: url(img/logout-hot.png);
+}
 div.slide {
+	padding-top: 10px;
 	display: block;
 	position: absolute;
 	left: 80px;
@@ -106,16 +121,18 @@ div.slide {
 	top: 40px;
 	bottom: 120px;
 	overflow: hidden;
-	text-align: center;
-	vertical-align: bottom;
-	font-family: Tahoma;
-	font-size: 55px;
-	color: White;
 	background-repeat: no-repeat;
 	background-position: center;
 	background-image: url(img/ambire.jpg);
 	background-size: contain;
-	text-shadow: 5px 5px  #333;
+	text-align: center;
+}
+span.slideCaption {
+	color: #555;
+	background-color: #ffe;
+	padding-left: 5px;
+	padding-right: 5px;
+	border: 1px solid #555;
 }
 div#frontSlide {
 	opacity: 0;
@@ -126,28 +143,12 @@ div#backSlide {
 	z-index: -1;
 }
 span#pinDisplay {
-	font-family: Tahoma;
-	font-size: 55px;
-	color: White;
 	display: inline-block;
 	position: absolute;
 	left: 10px;
 	bottom: 10px;
 	height: 80px;
 	vertical-align: bottom;
-}
-a.logoutLink {
-	margin-left: 80px;
-	color: Silver;
-	text-decoration: none;
-	border: none;
-}
-a.logoutLink:hover {
-	color: CornflowerBlue;
-	text-decoration: underline;
-}
-a img {
-	border: none;
 }
 </style>
 <script type="text/javascript" src="js/jquery-1.7.2.min.js"></script>
@@ -177,13 +178,13 @@ function showSlide(href, caption) {
 		g_animating = true;
 		$('#frontSlide').css('opacity', '0');
 		$('#frontSlide').css('background-image', 'url(' + href + ')');
-		$('#frontSlide').text(caption);
+		$('#frontSlide > .slideCaption').text(caption);
 		$('#frontSlide').animate({ opacity: 1 }, 800);
 		$('#backSlide').animate({ opacity: 0 }, {
 			duration: 800,
 			complete: function() {
 				$('#backSlide').css('background-image', 'url(' + href + ')');
-				$('#backSlide').text(caption);
+				$('#backSlide > .slideCaption').text(caption);
 				$('#backSlide').css('opacity', '1');
 				$('#frontSlide').css('opacity', '0');
 				g_animating = false;
@@ -195,7 +196,7 @@ function showSlide(href, caption) {
 
 function showEmptySlide() {
 	g_index = -1;
-	showSlide('img/ambire.jpg', 'Ambire');
+	showSlide('img/ambire.jpg', '');
 }
 
 function showCurrentSlide() {
@@ -349,15 +350,19 @@ function play() {
 		autoAdvance();
 	}
 }
+
+function logout() {
+	window.location = "logout";
+}
 </script>
 </head>
 <body>
-<div id="frontSlide" class="slide"></div>
-<div id="backSlide" class="slide"></div>
+<div id="frontSlide" class="slide"><span class="slideCaption">&nbsp;</span></div>
+<div id="backSlide" class="slide"><span class="slideCaption">&nbsp;</span></div>
 <span id="leftScrollButton" onclick="prevSlide()"></span>
 <span id="rightScrollButton" onclick="nextSlide()"></span>
-<div id="bottomButtons"><span id="pauseButton" onclick="pause()"></span><span id="playButton" onclick="play()"></span></div>
-<span id="pinDisplay">PIN: <%= session.getAttribute("pin") %><a class="logoutLink" href="logout"><img src="img/logout.png" width="80" height="80" /> Logout</a></span>
+<div id="bottomButtons"><span id="pauseButton" onclick="pause()"></span><span id="playButton" onclick="play()"></span><span id="logoutButton" onclick="logout()"></span></div>
+<span id="pinDisplay">PIN: <%= session.getAttribute("pin") %></span>
 <script type="text/javascript">
 $(run);
 </script>
