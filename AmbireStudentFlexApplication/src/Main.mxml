@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
-<mx:Script><![CDATA[
+<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark" width="550" height="600" creationComplete="application_creationCompleted()">
+<fx:Script><![CDATA[
 	[Embed(source="ambire.jpg",mimeType="image/jpeg")]
 	[Bindable]
 	public var AMBIRE_JPG:Class;
@@ -23,46 +23,76 @@
 	[Bindable]
 	public var SHUTTER_MP3:Class;
 	
-]]></mx:Script>
-<mx:VBox>
-<mx:HBox id="cameraVideoPanel">
-	<mx:Image id="staticImage" source="{AMBIRE_JPG}" width="500" height="400" visible="true" />
-</mx:HBox>
-<mx:Grid>
-	<mx:GridRow>
-		<mx:GridItem>
-			<mx:Label text="Name:" />
-		</mx:GridItem>
-		<mx:GridItem>
-			<mx:TextInput id="nameTextField" />
-		</mx:GridItem>
-	</mx:GridRow>
-	<mx:GridRow>
-		<mx:GridItem>
-			<mx:Label text="PIN:" />
-		</mx:GridItem>
-		<mx:GridItem>
-			<mx:TextInput id="pinTextField" />
-		</mx:GridItem>
-	</mx:GridRow>
-	<mx:GridRow id="reasonPanel" >
-		<mx:GridItem />
-		<mx:GridItem>
-			<mx:HBox>
-				<mx:Image id="reasonImage" source="{GO_PNG}" width="24" height="24" />
-				<mx:Label id="reasonTextField" text="Type your name and PIN to connect to Ambire" />
-			</mx:HBox>
-		</mx:GridItem>
-	</mx:GridRow>
-</mx:Grid>
-<mx:HBox>
-	<mx:Button id="screenshotButton" label="Screenshot" />
-	<mx:Button id="webcamButton" label="Webcam" visible="true" />
-	<mx:HBox id="webcamControlPanel" visible="false">
-		<mx:Button id="takePictureButton" label="Take Picture" />
-		<mx:Button id="cancelButton" label="Cancel" />
-	</mx:HBox>
-	<mx:Button id="uploadButton" label="Upload" />
-</mx:HBox>
-</mx:VBox>
-</mx:Application>
+	private function application_creationCompleted():void {
+		nameTextField.setFocus();
+	}
+	
+	private function nameTextField_changed(ev:Event):void {
+	}
+	
+	private function pinTextField_changed(ev:Event):void {
+	}
+	
+	private function screenshotButton_clicked(ev:Event):void {
+	}
+	
+	private function webcamButton_clicked(ev:Event):void {
+	}
+	
+	private function takePictureButton_clicked(ev:Event):void {
+	}
+	
+	private function cancelButton_clicked(ev:Event):void {
+	}
+	
+	private function uploadButton_clicked(ev:Event):void {
+	}
+	
+]]></fx:Script>
+<s:Group width="100%">
+	<s:layout>
+		<s:VerticalLayout horizontalAlign="center" />
+	</s:layout>
+	<s:Group id="cameraVideoPanel">
+		<s:layout>
+			<s:HorizontalLayout />
+		</s:layout>
+		<s:Image id="staticImage" source="{AMBIRE_JPG}" width="500" height="400" visible="true" />
+	</s:Group>
+	<s:Form>
+		<s:layout>
+			<s:FormLayout gap="-14" />
+		</s:layout>
+		<s:FormItem label="Name:" textAlign="right">
+			<s:TextInput id="nameTextField" width="100%" change="nameTextField_changed(event);" textAlign="left" />
+		</s:FormItem>
+		<s:FormItem label="PIN:" textAlign="right">
+			<s:TextInput id="pinTextField" width="100%" change="pinTextField_changed(event);" textAlign="left" />
+		</s:FormItem>
+		<s:FormItem id="reasonPanel" visible="true">
+			<s:Group>
+				<s:layout>
+					<s:HorizontalLayout verticalAlign="middle" />
+				</s:layout>
+				<s:Image id="reasonImage" source="{GO_PNG}" width="24" height="24" />
+				<s:Label id="reasonTextField" text="Type your name and PIN to connect to Ambire" />
+			</s:Group>
+		</s:FormItem>
+	</s:Form>
+	<s:Group id="buttonPanel" width="500" height="40" enabled="false">
+		<s:layout>
+			<s:HorizontalLayout horizontalAlign="center" />
+		</s:layout>
+		<s:Button id="screenshotButton" label="Screenshot" percentWidth="30" click="screenshotButton_clicked(event);" />
+		<s:Button id="webcamButton" label="Webcam" includeInLayout="true" visible="true" percentWidth="30" click="webcamButton_clicked(event);" />
+		<s:Group id="webcamControlPanel" includeInLayout="false" visible="false" percentWidth="30">
+			<s:layout>
+				<s:HorizontalLayout />
+			</s:layout>
+			<s:Button id="takePictureButton" label="Take Picture" click="takePictureButton_clicked(event);" />
+			<s:Button id="cancelButton" label="Cancel" click="cancelButton_clicked(event);" />
+		</s:Group>
+		<s:Button id="uploadButton" label="Upload" percentWidth="30" click="uploadButton_clicked(event);" />
+	</s:Group>
+</s:Group>
+</s:Application>
