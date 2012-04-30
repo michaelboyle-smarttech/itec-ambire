@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="AmbireStudentFlexApplication" basedir=".">
+	<property name="FLEX_HOME" value="/Developer/SDK/Flex" />
+	<property name="SRCROOT" value="src" />
+	<property name="BUILD_ROOT" value="build" />
+	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+	<target name="build">
+		<mxmlc file="${SRCROOT}/Main.mxml"
+			output="${BUILD_ROOT}/AmbireStudentFlexApplication.swf"
+			keep-generated-actionscript="true">
+			<load-config filename="${FLEX_HOME}/frameworks/flex-config.xml" />
+			<source-path path-element="${FLEX_HOME}/frameworks" />
+		</mxmlc>
+	</target>
+	<target name="clean">
+		<delete dir="${SRCROOT}/generated" />
+		<delete>
+			<fileset dir="${BUILD_ROOT}" includes="AmbireStudentFlexApplication.swf" />
+		</delete>
+	</target>
+</project>

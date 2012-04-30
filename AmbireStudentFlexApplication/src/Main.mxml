@@ -1,0 +1,68 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<mx:Application xmlns:mx="http://www.adobe.com/2006/mxml">
+<mx:Script><![CDATA[
+	[Embed(source="ambire.jpg",mimeType="image/jpeg")]
+	[Bindable]
+	public var AMBIRE_JPG:Class;
+	[Embed(source="go.png",mimeType="image/png")]
+	[Bindable]
+	public var GO_PNG:Class;
+	[Embed(source="activity.png",mimeType="image/png")]
+	[Bindable]
+	public var ACTIVITY_PNG:Class;
+	[Embed(source="stop.png",mimeType="image/png")]
+	[Bindable]
+	public var STOP_PNG:Class;
+	[Embed(source="warning.png",mimeType="image/png")]
+	[Bindable]
+	public var WARNING_PNG:Class;
+	[Embed(source="error.mp3",mimeType="application/octet-stream")]
+	[Bindable]
+	public var ERROR_MP3:Class;
+	[Embed(source="shutter.mp3",mimeType="application/octet-stream")]
+	[Bindable]
+	public var SHUTTER_MP3:Class;
+	
+]]></mx:Script>
+<mx:VBox>
+<mx:HBox id="cameraVideoPanel">
+	<mx:Image id="staticImage" source="{AMBIRE_JPG}" width="500" height="400" visible="true" />
+</mx:HBox>
+<mx:Grid>
+	<mx:GridRow>
+		<mx:GridItem>
+			<mx:Label text="Name:" />
+		</mx:GridItem>
+		<mx:GridItem>
+			<mx:TextInput id="nameTextField" />
+		</mx:GridItem>
+	</mx:GridRow>
+	<mx:GridRow>
+		<mx:GridItem>
+			<mx:Label text="PIN:" />
+		</mx:GridItem>
+		<mx:GridItem>
+			<mx:TextInput id="pinTextField" />
+		</mx:GridItem>
+	</mx:GridRow>
+	<mx:GridRow id="reasonPanel" >
+		<mx:GridItem />
+		<mx:GridItem>
+			<mx:HBox>
+				<mx:Image id="reasonImage" source="{GO_PNG}" width="24" height="24" />
+				<mx:Label id="reasonTextField" text="Type your name and PIN to connect to Ambire" />
+			</mx:HBox>
+		</mx:GridItem>
+	</mx:GridRow>
+</mx:Grid>
+<mx:HBox>
+	<mx:Button id="screenshotButton" label="Screenshot" />
+	<mx:Button id="webcamButton" label="Webcam" visible="true" />
+	<mx:HBox id="webcamControlPanel" visible="false">
+		<mx:Button id="takePictureButton" label="Take Picture" />
+		<mx:Button id="cancelButton" label="Cancel" />
+	</mx:HBox>
+	<mx:Button id="uploadButton" label="Upload" />
+</mx:HBox>
+</mx:VBox>
+</mx:Application>
