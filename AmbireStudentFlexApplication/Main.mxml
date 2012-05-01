@@ -38,6 +38,7 @@
 	import mx.utils.StringUtil;
 	import mx.graphics.codec.JPEGEncoder;
 	import ru.inspirit.net.MultipartURLLoader;
+	import org.eun.itec.ambire.student.AmbireCapture;
 	
 	[Embed(source="ambire.jpg")]
 	[Bindable]
@@ -181,7 +182,7 @@
 	
 	private function takeScreenshot():void {
 		m_screenshot = new Date();
-		setCurrentFrame(Capture.capture(), "screenshot.jpg");
+		setCurrentFrame(AmbireCapture.capture(), "screenshot.jpg");
 	}
 	
 	private function playSound(sound:String):void {
