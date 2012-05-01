@@ -1,6 +1,41 @@
 <?xml version="1.0" encoding="UTF-8" ?>
+<!--   Copyright (C) 2012, SMART Technologies.
+     All rights reserved.
+  
+     Redistribution and use in source and binary forms, with or without modification, are permitted
+     provided that the following conditions are met:
+   
+      * Redistributions of source code must retain the above copyright notice, this list of
+        conditions and the following disclaimer.
+   
+      * Redistributions in binary form must reproduce the above copyright notice, this list of
+        conditions and the following disclaimer in the documentation and/or other materials
+        provided with the distribution.
+   
+      * Neither the name of SMART Technologies nor the names of its contributors may be used to
+         endorse or promote products derived from this software without specific prior written
+         permission.
+   
+     THIS SOFTWARE IS PROVIDED BY THE COPYRIGHT HOLDERS AND CONTRIBUTORS "AS IS" AND ANY EXPRESS OR
+     IMPLIED WARRANTIES, INCLUDING, BUT NOT LIMITED TO, THE IMPLIED WARRANTIES OF MERCHANTABILITY AND
+     FITNESS FOR A PARTICULAR PURPOSE ARE DISCLAIMED. IN NO EVENT SHALL THE COPYRIGHT HOLDER OR
+     CONTRIBUTORS BE LIABLE FOR ANY DIRECT, INDIRECT, INCIDENTAL, SPECIAL, EXEMPLARY, OR
+     CONSEQUENTIAL DAMAGES (INCLUDING, BUT NOT LIMITED TO, PROCUREMENT OF SUBSTITUTE GOODS OR
+     SERVICES; LOSS OF USE, DATA, OR PROFITS; OR BUSINESS INTERRUPTION) HOWEVER CAUSED AND ON ANY
+     THEORY OF LIABILITY, WHETHER IN CONTRACT, STRICT LIABILITY, OR TORT (INCLUDING NEGLIGENCE OR
+     OTHERWISE) ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE, EVEN IF ADVISED OF THE
+     POSSIBILITY OF SUCH DAMAGE.
+   
+     Author: Michael Boyle
+-->
 <s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark" width="550" height="600" creationComplete="application_creationCompleted()">
 <fx:Script><![CDATA[
+	import flash.display.*;
+	import flash.events.*;
+	import flash.net.*;
+	import flash.utils.*;
+	import mx.utils.StringUtil;
+	
 	[Embed(source="ambire.jpg",mimeType="image/jpeg")]
 	[Bindable]
 	public var AMBIRE_JPG:Class;
@@ -22,38 +57,345 @@
 	[Embed(source="shutter.mp3",mimeType="application/octet-stream")]
 	[Bindable]
 	public var SHUTTER_MP3:Class;
+	[Bindable]
+	public var nameTextField_text:String = "";
+	[Bindable]
+	public var pinTextField_text:String = "";
+	
+	
+	private static const REVERIFY_INTERVAL_MILLIS:int = 5 * 60 * 1000;
+	private static const SCREENSHOT_INTERVAL_MILLIS:int = 2 * 60 * 1000;
+	private static function uuid_create():String {
+		var ALPHABET:String = "abcdefghijklmnoprstuvwxyz0123456789"
+		var s:String = "q";
+		for(var i:int = 0; i < 3; ++i) {
+			var c:int = int(Math.random() * 1073741824);
+			for(var j:int = 0; j < 30; j += 5) {
+				s += ALPHABET.charAt(c & 31);
+				c = c >> 5;
+			}
+		}
+		return s;
+	}
+	private static function isNullOrWhiteSpace(s:String):Boolean {
+		if(s != null) {
+			var n:int = s.length;
+			for(var i:int = 0; i < n; ++i) {
+				var c:Number = s.charCodeAt(i);
+				switch(c) {
+				default:
+					return false;
+				case 0x20:
+				case 0x9:
+				case 0xa:
+				case 0xc:
+				case 0xd:
+				case 0xa0:
+					break;
+				}
+			}
+		}
+		return true;
+	}
+	private static function parseBoolean(s:String):Boolean {
+		if(s == null) {
+			return false;
+		}
+		switch(StringUtil.trim(s).toLowerCase()) {
+		default:
+			return true;
+		case "":
+		case "false":
+		case "no":
+		case "0":
+			return false;
+		}
+	}
+	private var m_mode:int = Mode.Disconnected;
+	private var m_previousMode:int = Mode.Screenshot;
+	private var m_currentFrame:Bitmap = null;
+	private var m_verified:String = null;
+	private var m_verifying:String = null;
+	private var m_verification:Date = new Date(0);
+	private var m_screenshot:Date = new Date(0);
+	private var m_baseUrl:String = "http://ambire.itec.smartlabs.mobi/";
+	private var m_uniqueIdentifier:String = uuid_create();
 	
 	private function application_creationCompleted():void {
 		nameTextField.setFocus();
+		var taskTimer:Timer = new Timer(1 * 1000, 0);
+		taskTimer.addEventListener(TimerEvent.TIMER, taskTimer_ticked);
+		taskTimer.start();
+		setReason(Reason.MissingInfo);
+		setMode(Mode.Disconnected, true);
 	}
 	
-	private function nameTextField_changed(ev:Event):void {
+	private function enterMonitor():void {
+		// NO OP in ActionScript owing to lack of threading
 	}
 	
-	private function pinTextField_changed(ev:Event):void {
+	private function leaveMonitor():void {
+		// NO OP in ActionScript owing to lack of threading
 	}
+	
+	private function taskTimer_ticked(ev:TimerEvent):void {
+		var now:Date = new Date();
+		enterMonitor();
+        var shouldVerifyNow:Boolean = (isNullOrWhiteSpace(m_verified) && !isNullOrWhiteSpace(m_verifying)) || (isNullOrWhiteSpace(m_verifying) && !isNullOrWhiteSpace(m_verified) && (now.time - m_verification.time) >= REVERIFY_INTERVAL_MILLIS);
+		leaveMonitor();
+    	if(shouldVerifyNow) {
+    		beginVerify();
+    	}
+    	if(m_mode == Mode.Screenshot && (now.time - m_screenshot.time) > SCREENSHOT_INTERVAL_MILLIS) {
+    		takeScreenshot();
+    	}
+	}
+	
+	private function takeScreenshot():void {
+		m_screenshot = new Date();
+		var capture:Bitmap = null; // TODO! screen capture
+		setCurrentFrame(capture, "screenshot.jpg");
+	}
+	
+	private function playSound(sound:String):void {
+		// TODO! play sound
+	}
+	
+	private function playErrorSound():void {
+		playSound("error");
+	}
+	
+	private static function scaleBitmap(bmp:Bitmap, width:int, height:int):Bitmap {
+		// TODO! scale bitmap
+		return bmp; 
+	}
+	
+	private function uploadFrame(bmp:Bitmap, kind:String, fileName:String, replace:Boolean):void {
+		// TODO! upload frame
+	}
+	
+	private function setCurrentFrame(bmp:Bitmap, fileName:String):void {
+		m_currentFrame = bmp;
+		if(bmp == null) {
+			bmp = new AMBIRE_JPG();
+		} else if(!(bmp is AMBIRE_JPG) && (fileName != null)) {
+			bmp = scaleBitmap(bmp, 500, 400);
+			var kind:String = m_uniqueIdentifier;
+			var replace:Boolean = false;
+			switch(m_mode) {
+			case Mode.Screenshot:
+				kind += ".screenshot";
+				replace = true;
+				break;
+			case Mode.Webcam:
+				kind += ".webcam";
+				break;
+			case Mode.Upload:
+				kind += ".upload";
+				break;
+			}
+			uploadFrame(bmp, kind, fileName, replace);
+		}
+		if(bmp == null) {
+			staticImage.source = null;
+		} else {
+			staticImage.source = bmp;
+		}
+	}
+	
+	private function setMode(m:int, force:Boolean = false):void {
+		if(m_mode == m && !force) {
+			return;
+		}
+		if(m_mode != Mode.Disconnected) {
+			m_previousMode = m_mode;
+		}
+		m_mode = m;
+		if(m != Mode.Disconnected) {
+			screenshotButton.enabled = true;
+			uploadButton.enabled = true;
+			webcamButton.enabled = true; // TODO! determine webcam availability
+		} else {
+			screenshotButton.enabled = false;
+			uploadButton.enabled = false;
+			webcamButton.enabled = false;
+			setCurrentFrame(null, null);
+			reasonIcon.source = new GO_PNG();
+		}
+		if(m == Mode.Screenshot) {
+			takeScreenshot();
+		}
+		displayPanel.autoLayout = false;
+		buttonPanel.autoLayout = false;
+		if(m == Mode.Webcam) {
+			webcamControlPanel.visible = true;
+			webcamControlPanel.includeInLayout = true;
+			webcamButton.visible = false;
+			webcamButton.includeInLayout = false;
+			// TODO! show video
+		} else {
+			webcamControlPanel.visible = false;
+			webcamControlPanel.includeInLayout = false;
+			webcamButton.visible = true;
+			webcamButton.includeInLayout = true;
+		}
+		buttonPanel.autoLayout = true;
+		buttonPanel.validateNow();
+		displayPanel.autoLayout = true;
+		displayPanel.validateNow();
+	}
+	
+	private function setReason(r:int):void {
+		switch(r) {
+		default:
+			reasonIcon.visible = false;
+			reasonTextField.visible = false;
+			break;
+		case Reason.MissingInfo:
+			reasonIcon.source = new GO_PNG();
+			reasonIcon.visible = true;
+			reasonTextField.text = "Type your name and PIN to connect to the Ambire cloud.";
+			reasonTextField.visible = true;
+			break;
+		case Reason.VerifyingInfo:
+			reasonIcon.source = new ACTIVITY_PNG();
+			reasonIcon.visible = true;
+			reasonTextField.text = "Connecting to Ambire cloud...";
+			reasonTextField.visible = true;
+			break;
+		case Reason.Rejected:
+			reasonIcon.source = new STOP_PNG();
+			reasonIcon.visible = true;
+			reasonTextField.text = "PIN is incorrect.";
+			reasonTextField.visible = true;
+			break;
+		case Reason.NoConnection:
+			reasonIcon.source = new WARNING_PNG();
+			reasonIcon.visible = true;
+			reasonTextField.text = "Can\'t connect to the Ambire cloud.";
+			reasonTextField.visible = true;
+			break;
+		}
+    }
 	
 	private function screenshotButton_clicked(ev:Event):void {
+		setMode(Mode.Screenshot, true);
+	}
+	
+	private function finishWebcam():void {
+		buttonPanel.autoLayout = false;
+		webcamControlPanel.visible = false;
+		webcamControlPanel.includeInLayout = false;
+		webcamButton.visible = true;
+		webcamButton.includeInLayout = true;
+		buttonPanel.autoLayout = true;
+		buttonPanel.validateNow();
 	}
 	
 	private function webcamButton_clicked(ev:Event):void {
+		setMode(Mode.Webcam, true);
 	}
 	
 	private function takePictureButton_clicked(ev:Event):void {
+		// TODO! grab frame from video
 	}
 	
 	private function cancelButton_clicked(ev:Event):void {
+		// TODO! stop capture
+		setCurrentFrame(m_currentFrame, null);
+		m_mode = m_previousMode;
+		finishWebcam();
 	}
 	
 	private function uploadButton_clicked(ev:Event):void {
+		// TODO! browse for file
 	}
+	
+	private function nameTextField_changed(ev:Event):void {
+		checkSettings();
+	}
+	
+	private function pinTextField_changed(ev:Event):void {
+		checkSettings();
+	}
+	
+	private function checkSettings():void {
+		if(isNullOrWhiteSpace(nameTextField_text) || isNullOrWhiteSpace(pinTextField_text)) {
+			setReason(Reason.MissingInfo);
+		} else {
+			setNeedsVerify(pinTextField_text);
+		}
+	}
+	
+	private function setNeedsVerify(pin:String):void {
+		enterMonitor();
+		if(pin != m_verified) {
+			m_verifying = pin;
+			m_verified = null;
+			m_verification = new Date(0);
+		}
+		leaveMonitor();
+	}
+	
+	private function beginVerify():void {
+		verify();
+	}
+	
+	private function verify():void {
+		enterMonitor();
+		var pin:String = m_verifying;
+		m_verifying = null;
+		m_verified = null;
+		leaveMonitor();
+		if(!isNullOrWhiteSpace(pin)) {
+			setReason(Reason.VerifyingInfo);
+			var req:URLRequest = new URLRequest(m_baseUrl + "verify?p=" + encodeURIComponent(pin));
+			var loader:URLLoader = new URLLoader();
+			loader.addEventListener(Event.COMPLETE, function(ev:Event):void {
+				var loader:URLLoader = ev.target as URLLoader;
+				var accepted:Boolean = parseBoolean(loader.data as String);
+				enterMonitor();
+				m_verification = new Date();
+				m_verified = pin;
+				leaveMonitor();
+				setReason(accepted ? Reason.AllGood : Reason.Rejected);
+				if(accepted) {
+					if(m_mode == Mode.Disconnected) {
+						if(m_previousMode == Mode.Disconnected) {
+							m_previousMode = Mode.Screenshot;
+						}
+						setMode(m_previousMode, true);
+					}
+				} else {
+					setMode(Mode.Disconnected);
+				}
+			});
+			loader.addEventListener(IOErrorEvent.IO_ERROR, function(ev:IOErrorEvent):void {
+				verify_failed(pin,Reason.NoConnection);
+			});
+			loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, function(ev:SecurityErrorEvent):void {
+				verify_failed(pin,Reason.NoConnection);
+			});
+			loader.load(req);
+		}			
+	}
+	
+	private function verify_failed(pin:String,reason:int):void {
+		enterMonitor();
+		m_verification = new Date();
+		m_verified = pin;
+		leaveMonitor();
+		setReason(reason);
+    	setMode(Mode.Disconnected);
+	}
+	
 	
 ]]></fx:Script>
 <s:Group width="100%">
 	<s:layout>
 		<s:VerticalLayout horizontalAlign="center" />
 	</s:layout>
-	<s:Group id="cameraVideoPanel">
+	<s:Group id="displayPanel">
 		<s:layout>
 			<s:HorizontalLayout />
 		</s:layout>
@@ -64,17 +406,17 @@
 			<s:FormLayout gap="-14" />
 		</s:layout>
 		<s:FormItem label="Name:" textAlign="right">
-			<s:TextInput id="nameTextField" width="100%" change="nameTextField_changed(event);" textAlign="left" />
+			<s:TextInput id="nameTextField" text="{nameTextField_text}" width="100%" change="nameTextField_changed(event);" textAlign="left" />
 		</s:FormItem>
 		<s:FormItem label="PIN:" textAlign="right">
-			<s:TextInput id="pinTextField" width="100%" change="pinTextField_changed(event);" textAlign="left" />
+			<s:TextInput id="pinTextField" text="{pinTextField_text}" width="100%" change="pinTextField_changed(event);" textAlign="left" />
 		</s:FormItem>
 		<s:FormItem id="reasonPanel" visible="true">
 			<s:Group>
 				<s:layout>
 					<s:HorizontalLayout verticalAlign="middle" />
 				</s:layout>
-				<s:Image id="reasonImage" source="{GO_PNG}" width="24" height="24" />
+				<s:Image id="reasonIcon" source="{GO_PNG}" width="24" height="24" />
 				<s:Label id="reasonTextField" text="Type your name and PIN to connect to Ambire" />
 			</s:Group>
 		</s:FormItem>
