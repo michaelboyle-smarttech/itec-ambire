@@ -28,13 +28,20 @@
      Author: Michael Boyle
 */
 
-package {
+package org.eun.itec.ambire.student {
 	
 	import flash.display.*;
+	import flash.external.*;
 	
-	public class Capture {
+	public class AmbireCapture {
 		public static function capture():Bitmap {
-			var data:BitmapData = new BitmapData(1024,768, true, 0xFF0000FF);
+			var ec:ExtensionContext = ExtensionContext.createExtensionContext("org.eun.itec.ambire.student.AmbireCapture", null);
+			var n:int = int(ec.call("getScreenSize"));
+			var w:int = n & 0xFFFF;
+			var h:int = (h >> 16) & 0xFFFF;
+			var data:BitmapData = new BitmapData(w, h, true, 0x00000000);
+			ec.call("capture", data);
+			ec.dispose();
 			return new Bitmap(data);
 		}
 	}

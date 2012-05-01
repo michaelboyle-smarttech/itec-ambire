@@ -1,0 +1,8 @@
+LIBRARY AmbireCapture
+EXPORTS
+	AmbireCaptureGetScreenSize
+	AmbireCaptureCapture
+	AmbireCaptureContextInitializer
+	AmbireCaptureContextFinalizer
+	AmbireCaptureInitializer
+	AmbireCaptureFinalizer
