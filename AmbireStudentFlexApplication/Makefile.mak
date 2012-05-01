@@ -16,3 +16,6 @@ AmbireCapture.dll: AmbireCapture-Win32.obj AmbireCapture-Win32.def
 
 AmbireCapture-Win32.obj: AmbireCapture-Win32.cpp
 	$(cc) $(cdebug) $(cflags) $(cvarsmt) /c AmbireCapture-Win32.cpp
+
+clean:
+	del /q AmbireCapture.ane library.swf AmbireCapture.dll AmbireCapture-library.swc AmbireCapture.exp AmbireCapture.lib AmbireCapture.pdb vc100.pdb AmbireCapture-Win32.obj AmbireCapture.swc
