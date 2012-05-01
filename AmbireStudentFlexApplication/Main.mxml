@@ -218,9 +218,11 @@
 		} else {
 			w = int(Math.min(W * h / Number(H), width));
 		}
+		var sx:Number = Number(w) / Number(W);
+		var sy:Number = Number(h) / Number(H);
 		var d:BitmapData = new BitmapData(w, h, false, 0xFFFFFFFF);
 		var m:Matrix = new Matrix();
-		m.scale(Number(W) / Number(w), Number(H) / Number(h));
+		m.scale(sx, sy);
 		d.draw(bmp, m, null, null, null, true);
 		return new Bitmap(d);
 	}
@@ -389,20 +391,19 @@
 		setMode(Mode.Webcam, true);
 	}
 	
+	private function bitmapFromDrawable(v:IBitmapDrawable,w:int,h:int):Bitmap {
+		var d:BitmapData = new BitmapData(w, h, false, 0xFFFFFFFF);
+		d.draw(v, null, null, null, null, true);
+		return new Bitmap(d);
+	}
 	private function takePictureButton_clicked(ev:Event):void {
 		if(m_video != null) {
-			var v:IBitmapDrawable = videoContainer;
-			var w:int = videoContainer.width;
-			var h:int = videoContainer.height;
-			var d:BitmapData = new BitmapData(w, h, false, 0xFFFFFFFF);
-			d.draw(v, null, null, null, null, true);
-			setCurrentFrame(new Bitmap(d), "webcam.jpg");
+			setCurrentFrame(bitmapFromDrawable(videoContainer, videoContainer.width, videoContainer.height), "webcam.jpg");
 		}
 		finishWebcam();
 	}
 	
 	private function cancelButton_clicked(ev:Event):void {
-		// TODO! stop capture
 		setCurrentFrame(m_currentFrame, null);
 		m_mode = m_previousMode;
 		finishWebcam();
@@ -424,14 +425,23 @@
 	private function uploadButton_clicked(ev:Event):void {
 		var loader:Loader = new Loader();
 		var browser:FileReference = new FileReference(); 
-		loader.addEventListener(Event.COMPLETE, function(ev2:Event):void {
+		loader.contentLoaderInfo.addEventListener(Event.COMPLETE, function(ev2:Event):void {
 			setMode(Mode.Upload);
-			setCurrentFrame(loader.content as Bitmap, fileName(browser.name));
+			var bmp:Bitmap = loader.content as Bitmap;
+			setCurrentFrame(bmp, fileName(browser.name));
+			displayPanel.autoLayout = false;
+			videoContainer.visible = false;
+			videoContainer.includeInLayout = false;
+			staticImage.visible = true;
+			staticImage.includeInLayout = true;
+			videoContainer.removeChild(loader);
+			displayPanel.autoLayout = true;
+			displayPanel.validateNow();
 		});
-		loader.addEventListener(AsyncErrorEvent.ASYNC_ERROR, function(ev2:AsyncErrorEvent):void {
+		loader.contentLoaderInfo.addEventListener(IOErrorEvent.IO_ERROR, function(ev2:IOErrorEvent):void {
 			playErrorSound();
 		});
-		loader.addEventListener(IOErrorEvent.IO_ERROR, function(ev2:IOErrorEvent):void {
+		loader.addEventListener(AsyncErrorEvent.ASYNC_ERROR, function(ev2:AsyncErrorEvent):void {
 			playErrorSound();
 		});
 		loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, function(ev2:SecurityErrorEvent):void {
@@ -441,6 +451,14 @@
 			browser.load();
 		});
 		browser.addEventListener(Event.COMPLETE, function(ev2:Event):void {
+			displayPanel.autoLayout = false;
+			staticImage.visible = false;
+			staticImage.includeInLayout = false;
+			videoContainer.visible = true;
+			videoContainer.includeInLayout = true;
+			videoContainer.addChild(loader);
+			displayPanel.autoLayout = true;
+			displayPanel.validateNow();
 			loader.loadBytes(browser.data);
 		});
 		browser.browse(new Array(new FileFilter("Image Files (*.jpg, *.jpeg, *.gif, *.png)", "*.jpg;*.jpeg;*.gif;*.png")));
