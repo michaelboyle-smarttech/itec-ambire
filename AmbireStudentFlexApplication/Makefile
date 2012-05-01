@@ -4,12 +4,14 @@ INCLUDE = $(INCLUDE);C:\Developer\SDK\Flex\Include
 LIB = $(LIB);C:\Developer\SDK\Flex\lib\win
 !include <win32.mak>
 
-AmbireCapture.ane: library.swf AmbireCapture.dll AmbireCapture.xml
+AmbireCapture.ane: library.swf AmbireCapture.dll AmbireCapture.xml AmbireCapture.swf
 	adt -package -target ane AmbireCapture.ane AmbireCapture.xml -swc AmbireCapture.swc -platform Windows-x86 library.swf AmbireCapture.dll 
 
-library.swf: org/eun/itec/ambire/student/AmbireCapture.as
-	acompc -source-path . -include-classes org.eun.itec.ambire.student.AmbireCapture -swf-version=14 -output AmbireCapture-library.swc
-	unzip AmbireCapture-library.swc library.swf
+AmbireCapture.swf: org/eun/itec/ambire/student/AmbireCapture.as
+	acompc -source-path . -include-classes org.eun.itec.ambire.student.AmbireCapture -swf-version=14 -output AmbireCapture.swc
+
+library.swf: AmbireCapture.swf
+	unzip AmbireCapture.swc library.swf
 
 AmbireCapture.dll: AmbireCapture-Win32.obj AmbireCapture-Win32.def
 	$(link) $(ldebug) $(dlllflags) $(guilibsmt) AmbireCapture-Win32.obj FlashRuntimeExtensions.lib /DEF:AmbireCapture-Win32.def /OUT:AmbireCapture.dll
