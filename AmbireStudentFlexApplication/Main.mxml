@@ -28,42 +28,38 @@
    
      Author: Michael Boyle
 -->
-<s:Application xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark" width="550" height="600" creationComplete="application_creationCompleted()">
+<mx:Application width="550" height="600" backgroundColor="0xFFFFFF" horizontalAlign="center" creationComplete="application_creationCompleted()" xmlns:fx="http://ns.adobe.com/mxml/2009" xmlns:mx="library://ns.adobe.com/flex/mx" xmlns:s="library://ns.adobe.com/flex/spark">
 <fx:Script><![CDATA[
 	import flash.display.*;
 	import flash.events.*;
 	import flash.net.*;
 	import flash.utils.*;
+	import mx.core.*;
 	import mx.utils.StringUtil;
 	import mx.graphics.codec.JPEGEncoder;
 	import ru.inspirit.net.MultipartURLLoader;
 	
-	[Embed(source="ambire.jpg",mimeType="image/jpeg")]
+	[Embed(source="ambire.jpg")]
 	[Bindable]
 	public var AMBIRE_JPG:Class;
-	[Embed(source="go.png",mimeType="image/png")]
+	[Embed(source="go.png")]
 	[Bindable]
 	public var GO_PNG:Class;
-	[Embed(source="activity.png",mimeType="image/png")]
+	[Embed(source="activity.png")]
 	[Bindable]
 	public var ACTIVITY_PNG:Class;
-	[Embed(source="stop.png",mimeType="image/png")]
+	[Embed(source="stop.png")]
 	[Bindable]
 	public var STOP_PNG:Class;
-	[Embed(source="warning.png",mimeType="image/png")]
+	[Embed(source="warning.png")]
 	[Bindable]
 	public var WARNING_PNG:Class;
-	[Embed(source="error.mp3",mimeType="application/octet-stream")]
-	[Bindable]
-	public var ERROR_MP3:Class;
-	[Embed(source="shutter.mp3",mimeType="application/octet-stream")]
+	[Embed(source="shutter.mp3")]
 	[Bindable]
 	public var SHUTTER_MP3:Class;
+	[Embed(source="error.mp3")]
 	[Bindable]
-	public var nameTextField_text:String = "";
-	[Bindable]
-	public var pinTextField_text:String = "";
-	
+	public var ERROR_MP3:Class;
 	
 	private static const REVERIFY_INTERVAL_MILLIS:int = 5 * 60 * 1000;
 	private static const SCREENSHOT_INTERVAL_MILLIS:int = 2 * 60 * 1000;
@@ -122,6 +118,9 @@
 	private var m_screenshot:Date = new Date(0);
 	private var m_baseUrl:String = "http://ambire.itec.smartlabs.mobi/";
 	private var m_uniqueIdentifier:String = uuid_create();
+	private var m_camera:Camera = null;
+	private var m_cameraStatus:int = CameraStatus.Undetermined;
+	private var m_video:Video = null;
 	
 	private function application_creationCompleted():void {
 		nameTextField.setFocus();
@@ -130,6 +129,32 @@
 		taskTimer.start();
 		setReason(Reason.MissingInfo);
 		setMode(Mode.Disconnected, true);
+		m_camera = Camera.getCamera();
+		if(m_camera != null) {
+			m_camera.setMode(500, 400, 15.0);
+			m_camera.addEventListener(StatusEvent.STATUS, function(ev:StatusEvent):void {
+				if(m_camera.muted) {
+					m_cameraStatus = CameraStatus.Unavailable;
+					if(m_mode == Mode.Webcam) {
+						setMode(Mode.Screenshot);
+					}
+				} else {
+					m_cameraStatus = CameraStatus.Available;
+					if(m_mode != Mode.Disconnected) {
+						webcamButton.enabled = true;
+						if(m_mode == Mode.Webcam) {
+							displayPanel.autoLayout = false;
+							videoContainer.includeInLayout = true;
+							videoContainer.visible = true;
+							staticImage.includeInLayout = false;
+							staticImage.visible = false;
+							displayPanel.autoLayout = true;
+							displayPanel.validateNow();
+						}
+					}
+				}
+			});
+		}
 	}
 	
 	private function enterMonitor():void {
@@ -142,8 +167,9 @@
 	
 	private function taskTimer_ticked(ev:TimerEvent):void {
 		var now:Date = new Date();
+		var age:Number = now.time - m_verification.time;
 		enterMonitor();
-        var shouldVerifyNow:Boolean = (isNullOrWhiteSpace(m_verified) && !isNullOrWhiteSpace(m_verifying)) || (isNullOrWhiteSpace(m_verifying) && !isNullOrWhiteSpace(m_verified) && (now.time - m_verification.time) >= REVERIFY_INTERVAL_MILLIS);
+        var shouldVerifyNow:Boolean = (isNullOrWhiteSpace(m_verified) && !isNullOrWhiteSpace(m_verifying)) || (isNullOrWhiteSpace(m_verifying) && !isNullOrWhiteSpace(m_verified) && age >= REVERIFY_INTERVAL_MILLIS);
 		leaveMonitor();
     	if(shouldVerifyNow) {
     		beginVerify();
@@ -192,7 +218,7 @@
 		} else {
 			w = int(Math.min(W * h / Number(H), width));
 		}
-		var d:BitmapData = new BitmapData(w, h);
+		var d:BitmapData = new BitmapData(w, h, false, 0xFFFFFFFF);
 		var m:Matrix = new Matrix();
 		m.scale(Number(W) / Number(w), Number(H) / Number(h));
 		d.draw(bmp, m, null, null, null, true);
@@ -203,7 +229,7 @@
 		var enc:JPEGEncoder = new JPEGEncoder(80.0);
 		var bytes:ByteArray = enc.encode(bmp.bitmapData);
 		var req:MultipartURLLoader = new MultipartURLLoader();
-		req.addVariable("name", nameTextField_text);
+		req.addVariable("name", nameTextField.text);
 		req.addVariable("pin", m_verified);
 		req.addVariable("kind", kind);
 		req.addVariable("width", String(bmp.width));
@@ -222,6 +248,7 @@
 		if(bmp == null) {
 			bmp = new AMBIRE_JPG();
 		} else if(!(bmp is AMBIRE_JPG) && (fileName != null)) {
+			playSound("shutter");
 			bmp = scaleBitmap(bmp, 500, 400);
 			var kind:String = m_uniqueIdentifier;
 			var replace:Boolean = false;
@@ -257,7 +284,7 @@
 		if(m != Mode.Disconnected) {
 			screenshotButton.enabled = true;
 			uploadButton.enabled = true;
-			webcamButton.enabled = true; // TODO! determine webcam availability
+			webcamButton.enabled = (m_cameraStatus != CameraStatus.Unavailable);
 		} else {
 			screenshotButton.enabled = false;
 			uploadButton.enabled = false;
@@ -275,12 +302,19 @@
 			webcamControlPanel.includeInLayout = true;
 			webcamButton.visible = false;
 			webcamButton.includeInLayout = false;
-			// TODO! show video
+			m_video = new Video();
+			m_video.attachCamera(m_camera);
+			m_video.width = 500;
+			m_video.height = 400;
+			videoContainer.addChild(m_video);
+			if(m_cameraStatus == CameraStatus.Available) {
+				staticImage.visible = false;
+				staticImage.includeInLayout = false;
+				videoContainer.includeInLayout = true;
+				videoContainer.visible = true;
+			}
 		} else {
-			webcamControlPanel.visible = false;
-			webcamControlPanel.includeInLayout = false;
-			webcamButton.visible = true;
-			webcamButton.includeInLayout = true;
+			finishWebcam(false);
 		}
 		buttonPanel.autoLayout = true;
 		buttonPanel.validateNow();
@@ -325,14 +359,30 @@
 		setMode(Mode.Screenshot, true);
 	}
 	
-	private function finishWebcam():void {
-		buttonPanel.autoLayout = false;
+	private function finishWebcam(validateLayout:Boolean = true):void {
+		if(validateLayout) {
+			buttonPanel.autoLayout = false;
+			displayPanel.autoLayout = false;
+		}
 		webcamControlPanel.visible = false;
 		webcamControlPanel.includeInLayout = false;
 		webcamButton.visible = true;
 		webcamButton.includeInLayout = true;
-		buttonPanel.autoLayout = true;
-		buttonPanel.validateNow();
+		videoContainer.visible = false;
+		videoContainer.includeInLayout = false;
+		staticImage.visible = true;
+		staticImage.includeInLayout = true;
+		if(m_video != null) {
+			videoContainer.removeChild(m_video);
+			m_video.attachCamera(null);
+			m_video = null;
+		}
+		if(validateLayout) {
+			buttonPanel.autoLayout = true;
+			buttonPanel.validateNow();
+			displayPanel.autoLayout = true;
+			displayPanel.validateNow();
+		}
 	}
 	
 	private function webcamButton_clicked(ev:Event):void {
@@ -340,7 +390,15 @@
 	}
 	
 	private function takePictureButton_clicked(ev:Event):void {
-		// TODO! grab frame from video
+		if(m_video != null) {
+			var v:IBitmapDrawable = videoContainer;
+			var w:int = videoContainer.width;
+			var h:int = videoContainer.height;
+			var d:BitmapData = new BitmapData(w, h, false, 0xFFFFFFFF);
+			d.draw(v, null, null, null, null, true);
+			setCurrentFrame(new Bitmap(d), "webcam.jpg");
+		}
+		finishWebcam();
 	}
 	
 	private function cancelButton_clicked(ev:Event):void {
@@ -397,10 +455,10 @@
 	}
 	
 	private function checkSettings():void {
-		if(isNullOrWhiteSpace(nameTextField_text) || isNullOrWhiteSpace(pinTextField_text)) {
+		if(isNullOrWhiteSpace(nameTextField.text) || isNullOrWhiteSpace(pinTextField.text)) {
 			setReason(Reason.MissingInfo);
 		} else {
-			setNeedsVerify(pinTextField_text);
+			setNeedsVerify(pinTextField.text);
 		}
 	}
 	
@@ -433,7 +491,9 @@
 				var accepted:Boolean = parseBoolean(loader.data as String);
 				enterMonitor();
 				m_verification = new Date();
-				m_verified = pin;
+				if(m_verifying == null) {
+					m_verified = pin;
+				}
 				leaveMonitor();
 				setReason(accepted ? Reason.AllGood : Reason.Rejected);
 				if(accepted) {
@@ -468,50 +528,46 @@
 	
 	
 ]]></fx:Script>
-<s:Group width="100%">
-	<s:layout>
-		<s:VerticalLayout horizontalAlign="center" />
-	</s:layout>
-	<s:Group id="displayPanel">
-		<s:layout>
-			<s:HorizontalLayout />
-		</s:layout>
-		<s:Image id="staticImage" source="{AMBIRE_JPG}" width="500" height="400" visible="true" />
-	</s:Group>
-	<s:Form>
-		<s:layout>
-			<s:FormLayout gap="-14" />
-		</s:layout>
-		<s:FormItem label="Name:" textAlign="right">
-			<s:TextInput id="nameTextField" text="{nameTextField_text}" width="100%" change="nameTextField_changed(event);" textAlign="left" />
-		</s:FormItem>
-		<s:FormItem label="PIN:" textAlign="right">
-			<s:TextInput id="pinTextField" text="{pinTextField_text}" width="100%" change="pinTextField_changed(event);" textAlign="left" />
-		</s:FormItem>
-		<s:FormItem id="reasonPanel" visible="true">
-			<s:Group>
-				<s:layout>
-					<s:HorizontalLayout verticalAlign="middle" />
-				</s:layout>
-				<s:Image id="reasonIcon" source="{GO_PNG}" width="24" height="24" />
-				<s:Label id="reasonTextField" text="Type your name and PIN to connect to Ambire" />
-			</s:Group>
-		</s:FormItem>
-	</s:Form>
-	<s:Group id="buttonPanel" width="500" height="40" enabled="false">
-		<s:layout>
-			<s:HorizontalLayout horizontalAlign="center" />
-		</s:layout>
-		<s:Button id="screenshotButton" label="Screenshot" percentWidth="30" click="screenshotButton_clicked(event);" />
-		<s:Button id="webcamButton" label="Webcam" includeInLayout="true" visible="true" percentWidth="30" click="webcamButton_clicked(event);" />
-		<s:Group id="webcamControlPanel" includeInLayout="false" visible="false" percentWidth="30">
-			<s:layout>
-				<s:HorizontalLayout />
-			</s:layout>
-			<s:Button id="takePictureButton" label="Take Picture" click="takePictureButton_clicked(event);" />
-			<s:Button id="cancelButton" label="Cancel" click="cancelButton_clicked(event);" />
-		</s:Group>
-		<s:Button id="uploadButton" label="Upload" percentWidth="30" click="uploadButton_clicked(event);" />
-	</s:Group>
-</s:Group>
-</s:Application>
+<mx:Box direction="vertical">
+	<mx:HBox id="displayPanel" width="500" height="400">
+		<mx:Image id="staticImage" source="{AMBIRE_JPG}" width="500" height="400" visible="true" includeInLayout="true" />
+		<mx:UIComponent id="videoContainer" width="500" height="400" visible="false" includeInLayout="false" />
+	</mx:HBox>
+	<mx:Grid width="100%">
+		<mx:GridRow width="100%">
+			<mx:GridItem>
+				<mx:Label text="Name:" textAlign="right" />
+			</mx:GridItem>
+			<mx:GridItem width="100%">
+				<mx:TextInput id="nameTextField" width="100%" change="nameTextField_changed(event);" textAlign="left" />
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%">
+			<mx:GridItem>
+				<mx:Label text="PIN:" textAlign="right" />
+			</mx:GridItem>
+			<mx:GridItem width="100%">
+				<mx:TextInput id="pinTextField" width="100%" change="pinTextField_changed(event);" textAlign="left" />
+			</mx:GridItem>
+		</mx:GridRow>
+		<mx:GridRow width="100%">
+			<mx:GridItem />
+			<mx:GridItem width="100%">
+				<mx:Box direction="horizontal" verticalAlign="middle">
+					<mx:Image id="reasonIcon" source="{GO_PNG}" width="24" height="24" />
+					<mx:Label id="reasonTextField" text="Type your name and PIN to connect to Ambire" />
+				</mx:Box>
+			</mx:GridItem>
+		</mx:GridRow>
+	</mx:Grid>
+	<mx:Box direction="horizontal" id="buttonPanel" width="100%" height="40" horizontalAlign="center">
+		<mx:Button id="screenshotButton" label="Screenshot" percentWidth="30" click="screenshotButton_clicked(event);" enabled="false" />
+		<mx:Button id="webcamButton" label="Webcam" percentWidth="30" includeInLayout="true" visible="true" click="webcamButton_clicked(event);" enabled="false" />
+		<mx:Box direction="horizontal" id="webcamControlPanel" percentWidth="30" includeInLayout="false" visible="false">
+			<mx:Button id="takePictureButton" label="Take Picture" click="takePictureButton_clicked(event);" />
+			<mx:Button id="cancelButton" label="Cancel" click="cancelButton_clicked(event);" />
+		</mx:Box>
+		<mx:Button id="uploadButton" label="Upload" percentWidth="30" click="uploadButton_clicked(event);" enabled="false" />
+	</mx:Box>
+</mx:Box>
+</mx:Application>

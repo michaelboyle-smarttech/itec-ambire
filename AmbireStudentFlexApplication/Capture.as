@@ -34,7 +34,7 @@ package {
 	
 	public class Capture {
 		public static function capture():Bitmap {
-			var data:BitmapData = new BitmapData(1024,768);
+			var data:BitmapData = new BitmapData(1024,768, true, 0xFF0000FF);
 			return new Bitmap(data);
 		}
 	}

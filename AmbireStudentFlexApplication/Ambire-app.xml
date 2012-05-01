@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<application xmlns="http://ns.adobe.com/air/application/3.0">
+	<id>org.eun.itec.ambire.student.AmbireStudentFlexApplication</id>
+	<versionNumber>1.0</versionNumber>
+	<filename>Ambire</filename>
+	<initialWindow>
+		<content>Ambire.swf</content>
+		<visible>true</visible>
+		<width>550</width>
+		<height>600</height>
+	</initialWindow>
+</application>
