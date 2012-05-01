@@ -35,6 +35,8 @@
 	import flash.net.*;
 	import flash.utils.*;
 	import mx.utils.StringUtil;
+	import mx.graphics.codec.JPEGEncoder;
+	import ru.inspirit.net.MultipartURLLoader;
 	
 	[Embed(source="ambire.jpg",mimeType="image/jpeg")]
 	[Bindable]
@@ -153,12 +155,24 @@
 	
 	private function takeScreenshot():void {
 		m_screenshot = new Date();
-		var capture:Bitmap = null; // TODO! screen capture
-		setCurrentFrame(capture, "screenshot.jpg");
+		setCurrentFrame(Capture.capture(), "screenshot.jpg");
 	}
 	
 	private function playSound(sound:String):void {
-		// TODO! play sound
+		var s:Sound = null;
+		switch(sound) {
+		default:
+			break;
+		case "error":
+			s = new ERROR_MP3();
+			break;
+		case "shutter":
+			s = new SHUTTER_MP3();
+			break;
+		}
+		if(s != null) {
+			s.play();
+		}
 	}
 	
 	private function playErrorSound():void {
@@ -166,12 +180,41 @@
 	}
 	
 	private static function scaleBitmap(bmp:Bitmap, width:int, height:int):Bitmap {
-		// TODO! scale bitmap
-		return bmp; 
+		var W:int = bmp.width;
+		var H:int = bmp.height;
+		if(W <= width && H <= height) {
+			return bmp;
+		}
+		var w:int = width;
+		var h:int = height;
+		if((Number(W) / Number(H)) >= (Number(width) / Number(height))) {
+			h = int(Math.min(H * w / Number(W), height));
+		} else {
+			w = int(Math.min(W * h / Number(H), width));
+		}
+		var d:BitmapData = new BitmapData(w, h);
+		var m:Matrix = new Matrix();
+		m.scale(Number(W) / Number(w), Number(H) / Number(h));
+		d.draw(bmp, m, null, null, null, true);
+		return new Bitmap(d);
 	}
 	
 	private function uploadFrame(bmp:Bitmap, kind:String, fileName:String, replace:Boolean):void {
-		// TODO! upload frame
+		var enc:JPEGEncoder = new JPEGEncoder(80.0);
+		var bytes:ByteArray = enc.encode(bmp.bitmapData);
+		var req:MultipartURLLoader = new MultipartURLLoader();
+		req.addVariable("name", nameTextField_text);
+		req.addVariable("pin", m_verified);
+		req.addVariable("kind", kind);
+		req.addVariable("width", String(bmp.width));
+		req.addVariable("height", String(bmp.height));
+		if(replace) {
+			req.addVariable("replace", "replace");
+		}
+		req.addFile(bytes, fileName, "file", "image/jpeg");
+		req.addEventListener(Event.COMPLETE, function(ev:Event):void {
+		});
+		req.load(m_baseUrl + "upload");
 	}
 	
 	private function setCurrentFrame(bmp:Bitmap, fileName:String):void {
@@ -307,8 +350,42 @@
 		finishWebcam();
 	}
 	
+	private static function fileName(s:String):String {
+		var lastSlash:int = s.lastIndexOf('/');
+		var lastBackslash:int = s.lastIndexOf('\\');
+		if(lastBackslash > lastSlash) {
+			lastSlash = lastBackslash;
+		}
+		if(lastSlash >= 0) {
+			return s.slice(lastSlash + 1);
+		} else {
+			return s;
+		}
+	}
+	
 	private function uploadButton_clicked(ev:Event):void {
-		// TODO! browse for file
+		var loader:Loader = new Loader();
+		var browser:FileReference = new FileReference(); 
+		loader.addEventListener(Event.COMPLETE, function(ev2:Event):void {
+			setMode(Mode.Upload);
+			setCurrentFrame(loader.content as Bitmap, fileName(browser.name));
+		});
+		loader.addEventListener(AsyncErrorEvent.ASYNC_ERROR, function(ev2:AsyncErrorEvent):void {
+			playErrorSound();
+		});
+		loader.addEventListener(IOErrorEvent.IO_ERROR, function(ev2:IOErrorEvent):void {
+			playErrorSound();
+		});
+		loader.addEventListener(SecurityErrorEvent.SECURITY_ERROR, function(ev2:SecurityErrorEvent):void {
+			playErrorSound();
+		});
+		browser.addEventListener(Event.SELECT, function(ev2:Event):void {
+			browser.load();
+		});
+		browser.addEventListener(Event.COMPLETE, function(ev2:Event):void {
+			loader.loadBytes(browser.data);
+		});
+		browser.browse(new Array(new FileFilter("Image Files (*.jpg, *.jpeg, *.gif, *.png)", "*.jpg;*.jpeg;*.gif;*.png")));
 	}
 	
 	private function nameTextField_changed(ev:Event):void {
