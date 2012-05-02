@@ -35,10 +35,15 @@ package org.eun.itec.ambire.student {
 	
 	public class AmbireCapture {
 		public static function capture():Bitmap {
-			var ec:ExtensionContext = ExtensionContext.createExtensionContext("org.eun.itec.ambire.student.AmbireCapture", null);
+			var ec:ExtensionContext = ExtensionContext.createExtensionContext("AmbireCapture", null);
+			if(ec == null) {
+				trace("Cannot find native extension.");
+				return null;
+			}
 			var n:int = int(ec.call("getScreenSize"));
 			var w:int = n & 0xFFFF;
 			var h:int = (h >> 16) & 0xFFFF;
+			trace("Capture scree size: " + w + " x " + h);
 			var data:BitmapData = new BitmapData(w, h, true, 0x00000000);
 			ec.call("capture", data);
 			ec.dispose();

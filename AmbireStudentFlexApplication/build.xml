@@ -1,7 +1,9 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="AmbireStudentFlexApplication" basedir="." default="Ambire-swf">
+<project name="AmbireStudentFlexApplication" basedir="." default="Ambire-air">
+	<import file="codesign.xml" />
 	<property name="FLEX_HOME" value="/Developer/SDK/Flex" />
 	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+	<ant dir="AmbireCapture" />
 	<uptodate targetfile="Ambire.swf" property="Ambire-swf.uptodate">
 		<srcfiles dir=".">
 			<include name="Main.mxml" />
@@ -16,187 +18,67 @@
 			<include name="ru/inspirit/net/*.as" />
 			<include name="error.mp3" />
 			<include name="shutter.mp3" />
+			<include name="AmbireCapture.ane" />
+			<include name="AmbireCapture.swc" />
 		</srcfiles>
 	</uptodate>
-	<target name="Ambire-swf" depends="AmbireCapture-ane" unless="Ambire-swf.uptodate">
-		<mxmlc file="Main.mxml"
-			output="Ambire.swf"
-			keep-generated-actionscript="true">
+	<target name="Ambire-swf" unless="Ambire-swf.uptodate">
+		<mxmlc file="Main.mxml" output="Ambire.swf" keep-generated-actionscript="true">
 			<load-config filename="${FLEX_HOME}/frameworks/air-config.xml" />
 			<source-path path-element="${FLEX_HOME}/frameworks" />
+			<compiler.include-libraries dir=".">
+				<include name="AmbireCapture.swc" />
+			</compiler.include-libraries>
 			<compiler.debug>true</compiler.debug>
 			<compiler.verbose-stacktraces>true</compiler.verbose-stacktraces>
 		</mxmlc>
 	</target>
 	
-	
-	<condition property="AmbireCapture-nativeLibrary.libraryFile" value="AmbireCapture.dll">
-		<os name="Windows 7" />
-	</condition>
-	<condition property="AmbireCapture-nativeLibrary.libraryFile" value="AmbireCapture.dylib">
-		<os name="Mac OS X" />
-	</condition>
-	
-	<condition property="AmbireCapture-nativeLibrary.uptodate">
-		<or>
-			<and>
-				<os name="Windows 7" />
-				<uptodate targetfile="AmbireCapture.dll">
-					<srcfiles dir=".">
-						<include name="AmbireCapture-Win32.cpp" />
-						<include name="AmbireCapture-Win32.def" />
-					</srcfiles>
-				</uptodate>
-			</and>
-			<and>
-				<os name="Mac OS X" />
-				<uptodate targetfile="AmbireCapture.dylib">
-					<srcfiles dir=".">
-						<include name="AmbireCapture-MacOSX.mm" />
-					</srcfiles>
-				</uptodate>
-			</and>				
-		</or>
-	</condition>
-	<target name="AmbireCapture-nativeLibrary" unless="AmbireCapture-nativeLibrary.uptodate">
-		<exec executable="cl" os="Windows 7">
-			<arg value="/nologo" />
-			<arg value="/Ox" />
-			<arg value="/D_X86=1" />
-			<arg value="/DWIN32" />
-			<arg value="/D_WINNT" />
-			<arg value="/W3" />
-			<arg value="/DWINVER=0x502" />
-			<arg value="/D_WIN32_WINNT=0x502" />
-			<arg value="/D_MT" />
-			<arg value="/MT" />
-			<arg value="/I\Developer\SDK\Flex\include" />
-			<arg value="/FeAmbireCapture.dll" />
-			<arg value="/FdAmbireCapture.pdb" />
-			<arg value="AmbireCapture-Win32.cpp" />
-			<arg value="/link" />
-			<arg value="kernel32.lib" />
-			<arg value="advapi32.lib" />
-			<arg value="user32.lib" />
-			<arg value="gdi32.lib" />
-			<arg value="\Developer\SDK\Flex\lib\win\FlashRuntimeExtensions.lib" />
-			<arg value="/DEF:AmbireCapture-Win32.def" />
-		</exec>
-		<exec executable="g++" os="Mac OS X">
-			<arg value="-arch" />
-			<arg value="i386" />
-			<arg value="-fvisibility=hidden" />
-			<arg value="-ObjC++" />
-			<arg value="-mmacosx-version-min=10.6" />
-			<arg value="-framework" />
-			<arg value="CoreFoundation" />
-			<arg value="-framework" />
-			<arg value="ApplicationServices" />
-			<arg value="-framework" />
-			<arg value="Adobe AIR" />
-			<arg value="-dynamiclib" />
-			<arg value="-o" />
-			<arg value="AmbireCapture.dylib" />
-			<arg value="AmbireCapture-MacOSX.mm" />
-		</exec>
-	</target>
-	
-	
-	<uptodate targetfile="AmbireCapture.swc" property="AmbireCapture-swc.uptodate">
+	<uptodate targetfile="Ambire.air" property="Ambire-air.uptodate">
 		<srcfiles dir=".">
-			<include name="org/eun/itec/ambire/student/AmbireCapture.as" />
+			<include name="Ambire.swf" />
+			<include name="Ambire.ane" />
+			<include name="Ambire-app.xml" />
+			<include name="ambire-*-24bpp.png" />
 		</srcfiles>
 	</uptodate>
-	<target name="AmbireCapture-swc" unless="AmbireCapture-swc.uptodate">
+	<target name="Ambire-air" depends="Ambire-swf" unless="Ambire-air.uptodate">
 		<exec executable="cmd" os="Windows 7">
 			<arg value="/c" />
-			<arg value="\Developer\SDK\Flex\bin\acompc.bat" />
-			<arg value="-source-path" />
-			<arg value="." />
-			<arg value="-include-classes" />
-			<arg value="org.eun.itec.ambire.student.AmbireCapture" />
-			<arg value="-swf-version=14" />
-			<arg value="-output" />
-			<arg value="AmbireCapture.swc" />
-		</exec>
-		<exec executable="acompc" os="Mac OS X">
-			<arg value="-source-path" />
-			<arg value="." />
-			<arg value="-include-classes" />
-			<arg value="org.eun.itec.ambire.student.AmbireCapture" />
-			<arg value="-swf-version=14" />
-			<arg value="-output" />
-			<arg value="AmbireCapture.swc" />
-		</exec>
-		<exec executable="unzip">
-			<arg value="-o" />
-			<arg value="AmbireCapture.swc" />
-			<arg value="library.swf" />
-		</exec>
-	</target>	
-	
-	
-	<condition property="AmbireCapture-ane.platform" value="Windows-x86">
-		<os name="Windows 7" />
-	</condition>
-	<condition property="AmbireCapture-ane.platform" value="MacOSX-x86">
-		<os name="Mac OS X" />
-	</condition>
-	<uptodate targetfile="AmbireCapture.ane" property="AmbireCapture-ane.uptodate">
-		<srcfiles dir=".">
-			<include name="AmbireCapture.xml" />
-			<include name="AmbireCapture.swc" />
-			<include name="library.swf" />
-			<include name="${AmbireCapture-nativeLibrary.libraryFile}" />
-		</srcfiles>
-	</uptodate>
-	<target name="AmbireCapture-ane" depends="AmbireCapture-swc,AmbireCapture-nativeLibrary" unless="AmbireCapture-ane.uptodate">
-		<exec executable="cmd" os="Windows 7">
-			<arg value="/c" />
-			<arg value="/Developer/SDK/Flex/bin/adt.bat" />
+			<arg value="\Developer\SDK\Flex\bin\adt.bat" />
 			<arg value="-package" />
-			<arg value="-target" />
-			<arg value="ane" />
+			<arg value="-storetype" />
+			<arg value="${codesign.STORETYPE}" />
+			<arg value="-keystore" />
+			<arg value="${codesign.KEYSTORE}" />
+			<arg value="-storepass" />
+			<arg value="${codesign.STOREPASS}" />
+			<arg value="Ambire.air" />
+			<arg value="Ambire-app.xml" />
+			<arg value="Ambire.swf" />
 			<arg value="AmbireCapture.ane" />
-			<arg value="AmbireCapture.xml" />
-			<arg value="-swc" />
-			<arg value="AmbireCapture.swc" />
-			<arg value="-platform" />
-			<arg value="Windows-x86" />
-			<arg value="library.swf" />
-			<arg value="AmbireCapture.dll" />
 		</exec>
 		<exec executable="/Developer/SDK/Flex/bin/adt" os="Mac OS X">
 			<arg value="-package" />
-			<arg value="-target" />
-			<arg value="ane" />
+			<arg value="-storetype" />
+			<arg value="${codesign.STORETYPE}" />
+			<arg value="-keystore" />
+			<arg value="${codesign.KEYSTORE}" />
+			<arg value="-storepass" />
+			<arg value="${codesign.STOREPASS}" />
+			<arg value="Ambire.air" />
+			<arg value="Ambire-app.xml" />
+			<arg value="Ambire.swf" />
 			<arg value="AmbireCapture.ane" />
-			<arg value="AmbireCapture.xml" />
-			<arg value="-swc" />
-			<arg value="AmbireCapture.swc" />
-			<arg value="-platform" />
-			<arg value="MacOSX-x86" />
-			<arg value="library.swf" />
-			<arg value="AmbireCapture.dylib" />
 		</exec>
 	</target>
-	
-	
+
 	<target name="clean">
 		<delete dir="generated" />
 		<delete>
 			<fileset dir=".">
 				<include name="Ambire.swf" />
-				<include name="AmbireCapture.swc" />
-				<include name="AmbireCapture.ane" />
-				<include name="library.swf" />
-				<include name="AmbireCapture.dll" />
-				<include name="AmbireCapture.dylib" />
-				<include name="AmbireCapture.exp" />
-				<include name="AmbireCapture.lib" />
-				<include name="AmbireCapture.pdb" />
-				<include name="AmbireCapture-Win32.obj" />
-				<include name="AmbireCapture-MacOSX.o" />
+				<include name="Ambire.air" />
 			</fileset>
 		</delete>
 	</target>

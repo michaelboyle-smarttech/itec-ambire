@@ -1,6 +1,6 @@
 <?xml version="1.0" encoding="UTF-8" ?>
 <extension xmlns="http://ns.adobe.com/air/extension/3.1">
-	<id>org.eun.itec.ambire.student.AmbireCapture</id>
+	<id>AmbireCapture</id>
 	<versionNumber>1.0</versionNumber>
 	<description>Adobe AIR Native Extension to let the Ambire Student Application take screenshots.</description>
 	<platforms>
