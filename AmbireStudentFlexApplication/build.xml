@@ -59,9 +59,19 @@
 		</or>
 	</condition>
 	<target name="AmbireCapture-nativeLibrary" unless="AmbireCapture-nativeLibrary.uptodate">
-		<echo message="AmbireCapture-nativeLibrary.libraryFile = ${AmbireCapture-nativeLibrary.libraryFile}" />
 		<exec executable="cl" os="Windows">
+			<arg value="$cdebug" />
+			<arg value="$cflags" />
+			<arg value="$cvarsmt" />
+			<arg value="-I\Developer\SDK\Flex\include" />
 			<arg value="AmbireCapture-Win32.cpp" />
+			<arg value="/LINK" />
+			<arg value="$ldebug" />
+			<arg value="$dlllflags" />
+			<arg value="$guilibsmt" />
+			<arg value="\Developer\SDK\Flex\lib\win\FlashRuntimeExtensions.lib" />
+			<arg value="/DEF:AmbireCapture-Win32.def" />
+			<arg value="/OUT:AmbireCapture.dll" />
 		</exec>
 		<exec executable="g++" os="Mac OS X">
 			<arg value="-arch" />
