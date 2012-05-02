@@ -3,7 +3,6 @@
 	<import file="codesign.xml" />
 	<property name="FLEX_HOME" value="/Developer/SDK/Flex" />
 	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
-	<ant dir="AmbireCapture" />
 	<uptodate targetfile="Ambire.swf" property="Ambire-swf.uptodate">
 		<srcfiles dir=".">
 			<include name="Main.mxml" />
@@ -23,6 +22,7 @@
 		</srcfiles>
 	</uptodate>
 	<target name="Ambire-swf" unless="Ambire-swf.uptodate">
+		<ant dir="AmbireCapture" />
 		<mxmlc file="Main.mxml" output="Ambire.swf" keep-generated-actionscript="true">
 			<load-config filename="${FLEX_HOME}/frameworks/air-config.xml" />
 			<source-path path-element="${FLEX_HOME}/frameworks" />
@@ -74,6 +74,7 @@
 	</target>
 
 	<target name="clean">
+		<ant dir="AmbireCapture" target="clean" />
 		<delete dir="generated" />
 		<delete>
 			<fileset dir=".">

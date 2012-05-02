@@ -1,0 +1,181 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project name="AmbireStudentFlexApplication" basedir="." default="AmbireCapture-ane">
+	<import file="../codesign.xml" />
+	<property name="FLEX_HOME" value="/Developer/SDK/Flex" />
+	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
+	<condition property="AmbireCapture-nativeLibrary.libraryFile" value="AmbireCapture.dll">
+		<os name="Windows 7" />
+	</condition>
+	<condition property="AmbireCapture-nativeLibrary.libraryFile" value="AmbireCapture.dylib">
+		<os name="Mac OS X" />
+	</condition>
+	
+	<condition property="AmbireCapture-nativeLibrary.uptodate">
+		<or>
+			<and>
+				<os name="Windows 7" />
+				<uptodate targetfile="AmbireCapture.dll">
+					<srcfiles dir=".">
+						<include name="AmbireCapture-Win32.cpp" />
+						<include name="AmbireCapture-Win32.def" />
+					</srcfiles>
+				</uptodate>
+			</and>
+			<and>
+				<os name="Mac OS X" />
+				<uptodate targetfile="AmbireCapture.dylib">
+					<srcfiles dir=".">
+						<include name="AmbireCapture-MacOSX.mm" />
+					</srcfiles>
+				</uptodate>
+			</and>				
+		</or>
+	</condition>
+	<target name="AmbireCapture-nativeLibrary" unless="AmbireCapture-nativeLibrary.uptodate">
+		<exec executable="cl" os="Windows 7">
+			<arg value="/nologo" />
+			<arg value="/Ox" />
+			<arg value="/D_X86=1" />
+			<arg value="/DWIN32" />
+			<arg value="/D_WINNT" />
+			<arg value="/W3" />
+			<arg value="/DWINVER=0x502" />
+			<arg value="/D_WIN32_WINNT=0x502" />
+			<arg value="/D_MT" />
+			<arg value="/MT" />
+			<arg value="/I\Developer\SDK\Flex\include" />
+			<arg value="/FeAmbireCapture.dll" />
+			<arg value="/FdAmbireCapture.pdb" />
+			<arg value="AmbireCapture-Win32.cpp" />
+			<arg value="/link" />
+			<arg value="kernel32.lib" />
+			<arg value="advapi32.lib" />
+			<arg value="user32.lib" />
+			<arg value="gdi32.lib" />
+			<arg value="\Developer\SDK\Flex\lib\win\FlashRuntimeExtensions.lib" />
+			<arg value="/DEF:AmbireCapture-Win32.def" />
+		</exec>
+		<exec executable="g++" os="Mac OS X">
+			<arg value="-arch" />
+			<arg value="i386" />
+			<arg value="-fvisibility=hidden" />
+			<arg value="-ObjC++" />
+			<arg value="-mmacosx-version-min=10.6" />
+			<arg value="-framework" />
+			<arg value="CoreFoundation" />
+			<arg value="-framework" />
+			<arg value="ApplicationServices" />
+			<arg value="-framework" />
+			<arg value="Adobe AIR" />
+			<arg value="-dynamiclib" />
+			<arg value="-o" />
+			<arg value="AmbireCapture.dylib" />
+			<arg value="AmbireCapture-MacOSX.mm" />
+		</exec>
+	</target>
+	
+	
+	<uptodate targetfile="../AmbireCapture.swc" property="AmbireCapture-swc.uptodate">
+		<srcfiles dir=".">
+			<include name="org/eun/itec/ambire/student/AmbireCapture.as" />
+		</srcfiles>
+	</uptodate>
+	<target name="AmbireCapture-swc" unless="AmbireCapture-swc.uptodate">
+		<exec executable="cmd" os="Windows 7">
+			<arg value="/c" />
+			<arg value="\Developer\SDK\Flex\bin\acompc.bat" />
+			<arg value="-source-path" />
+			<arg value="." />
+			<arg value="-include-classes" />
+			<arg value="org.eun.itec.ambire.student.AmbireCapture" />
+			<arg value="-swf-version=14" />
+			<arg value="-output" />
+			<arg value="..\AmbireCapture.swc" />
+		</exec>
+		<exec executable="acompc" os="Mac OS X">
+			<arg value="-source-path" />
+			<arg value="." />
+			<arg value="-include-classes" />
+			<arg value="org.eun.itec.ambire.student.AmbireCapture" />
+			<arg value="-swf-version=14" />
+			<arg value="-output" />
+			<arg value="../AmbireCapture.swc" />
+		</exec>
+		<exec executable="unzip">
+			<arg value="-o" />
+			<arg value="../AmbireCapture.swc" />
+			<arg value="library.swf" />
+		</exec>
+	</target>	
+	
+	
+	<condition property="AmbireCapture-ane.platform" value="Windows-x86">
+		<os name="Windows 7" />
+	</condition>
+	<condition property="AmbireCapture-ane.platform" value="MacOSX-x86">
+		<os name="Mac OS X" />
+	</condition>
+	<uptodate targetfile="..\AmbireCapture.ane" property="AmbireCapture-ane.uptodate">
+		<srcfiles dir=".">
+			<include name="AmbireCapture.xml" />
+			<include name="..\AmbireCapture.swc" />
+			<include name="library.swf" />
+			<include name="${AmbireCapture-nativeLibrary.libraryFile}" />
+		</srcfiles>
+	</uptodate>
+	<target name="AmbireCapture-ane" depends="AmbireCapture-swc,AmbireCapture-nativeLibrary" unless="AmbireCapture-ane.uptodate">
+		<exec executable="cmd" os="Windows 7">
+			<arg value="/c" />
+			<arg value="\Developer\SDK\Flex\bin\adt.bat" />
+			<arg value="-package" />
+			<arg value="-storetype" />
+			<arg value="${codesign.STORETYPE}" />
+			<arg value="-keystore" />
+			<arg value="${codesign.KEYSTORE}" />
+			<arg value="-storepass" />
+			<arg value="${codesign.STOREPASS}" />
+			<arg value="-target" />
+			<arg value="ane" />
+			<arg value="..\AmbireCapture.ane" />
+			<arg value="AmbireCapture.xml" />
+			<arg value="-swc" />
+			<arg value="..\AmbireCapture.swc" />
+			<arg value="-platform" />
+			<arg value="Windows-x86" />
+			<arg value="library.swf" />
+			<arg value="AmbireCapture.dll" />
+		</exec>
+		<exec executable="/Developer/SDK/Flex/bin/adt" os="Mac OS X">
+			<arg value="-package" />
+			<arg value="-target" />
+			<arg value="ane" />
+			<arg value="../AmbireCapture.ane" />
+			<arg value="AmbireCapture.xml" />
+			<arg value="-swc" />
+			<arg value="../AmbireCapture.swc" />
+			<arg value="-platform" />
+			<arg value="MacOSX-x86" />
+			<arg value="library.swf" />
+			<arg value="AmbireCapture.dylib" />
+		</exec>
+	</target>
+	
+	<target name="clean">
+		<delete dir="generated" />
+		<delete>
+			<fileset dir=".">
+				<include name="../AmbireCapture.swc" />
+				<include name="../AmbireCapture.ane" />
+				<include name="library.swf" />
+				<include name="AmbireCapture.dll" />
+				<include name="AmbireCapture.dylib" />
+				<include name="AmbireCapture.exp" />
+				<include name="AmbireCapture.lib" />
+				<include name="AmbireCapture.pdb" />
+				<include name="AmbireCapture-Win32.obj" />
+				<include name="AmbireCapture-MacOSX.o" />
+			</fileset>
+		</delete>
+	</target>
+	
+</project>	

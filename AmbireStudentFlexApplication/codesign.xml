@@ -1,0 +1,6 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<project>
+	<property name="codesign.KEYSTORE" value="<!-- site-specific -->" />
+	<property name="codesign.STORETYPE" value="<!-- site-specific -->" />
+	<property name="codesign.STOREPASS" value="<!-- site-specific -->" />
+</project>
