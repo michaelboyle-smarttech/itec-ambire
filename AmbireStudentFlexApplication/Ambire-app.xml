@@ -9,4 +9,7 @@
 		<width>550</width>
 		<height>600</height>
 	</initialWindow>
+	<extensions>
+		<extensionID>AmbireCapture</extensionID>
+	</extensions>
 </application>

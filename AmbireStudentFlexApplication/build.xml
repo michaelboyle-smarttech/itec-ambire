@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8" ?>
-<project name="AmbireStudentFlexApplication" basedir="." default="Ambire-air">
+<project name="AmbireStudentFlexApplication" basedir="." default="Ambire-installer">
 	<import file="codesign.xml" />
 	<property name="FLEX_HOME" value="/Developer/SDK/Flex" />
 	<taskdef resource="flexTasks.tasks" classpath="${FLEX_HOME}/ant/lib/flexTasks.jar" />
@@ -17,8 +17,8 @@
 			<include name="ru/inspirit/net/*.as" />
 			<include name="error.mp3" />
 			<include name="shutter.mp3" />
-			<include name="AmbireCapture.ane" />
-			<include name="AmbireCapture.swc" />
+			<include name="SWC/AmbireCapture.swc" />
+			<include name="ANE/AmbireCapture.ane" />
 		</srcfiles>
 	</uptodate>
 	<target name="Ambire-swf" unless="Ambire-swf.uptodate">
@@ -27,59 +27,86 @@
 			<load-config filename="${FLEX_HOME}/frameworks/air-config.xml" />
 			<source-path path-element="${FLEX_HOME}/frameworks" />
 			<compiler.include-libraries dir=".">
-				<include name="AmbireCapture.swc" />
+				<include name="SWC/AmbireCapture.swc" />
+				<include name="ANE/AmbireCapture.ane" />
 			</compiler.include-libraries>
 			<compiler.debug>true</compiler.debug>
 			<compiler.verbose-stacktraces>true</compiler.verbose-stacktraces>
 		</mxmlc>
 	</target>
 	
-	<uptodate targetfile="Ambire.air" property="Ambire-air.uptodate">
-		<srcfiles dir=".">
-			<include name="Ambire.swf" />
-			<include name="Ambire.ane" />
-			<include name="Ambire-app.xml" />
-			<include name="ambire-*-24bpp.png" />
-		</srcfiles>
-	</uptodate>
-	<target name="Ambire-air" depends="Ambire-swf" unless="Ambire-air.uptodate">
+	<condition property="Ambire-installer.uptodate">
+		<or>
+			<and>
+				<os name="Windows 7" />
+				<uptodate targetfile="Ambire.exe">
+					<srcfiles dir=".">
+						<include name="Ambire.swf" />
+						<include name="ANE/AmbireCapture.ane" />
+						<include name="Ambire-app.xml" />
+						<include name="ambire-*-24bpp.png" />
+					</srcfiles>
+				</uptodate>
+			</and>
+			<and>
+				<os name="Mac OS X" />
+				<uptodate targetfile="Ambire.dmg">
+					<srcfiles dir=".">
+						<include name="Ambire.swf" />
+						<include name="ANE/AmbireCapture.ane" />
+						<include name="Ambire-app.xml" />
+						<include name="ambire-*-24bpp.png" />
+					</srcfiles>
+				</uptodate>
+			</and>				
+		</or>
+	</condition>
+	<target name="Ambire-installer" depends="Ambire-swf" unless="Ambire-installer.uptodate">
 		<exec executable="cmd" os="Windows 7">
 			<arg value="/c" />
 			<arg value="\Developer\SDK\Flex\bin\adt.bat" />
 			<arg value="-package" />
-			<arg value="-storetype" />
-			<arg value="${codesign.STORETYPE}" />
 			<arg value="-keystore" />
 			<arg value="${codesign.KEYSTORE}" />
+			<arg value="-storetype" />
+			<arg value="${codesign.STORETYPE}" />
 			<arg value="-storepass" />
 			<arg value="${codesign.STOREPASS}" />
-			<arg value="Ambire.air" />
+			<arg value="-target" />
+			<arg value="native" />
+			<arg value="Ambire.exe" />
 			<arg value="Ambire-app.xml" />
 			<arg value="Ambire.swf" />
-			<arg value="AmbireCapture.ane" />
+			<arg value="-extdir" />
+			<arg value="ANE" />
 		</exec>
 		<exec executable="/Developer/SDK/Flex/bin/adt" os="Mac OS X">
 			<arg value="-package" />
-			<arg value="-storetype" />
-			<arg value="${codesign.STORETYPE}" />
 			<arg value="-keystore" />
 			<arg value="${codesign.KEYSTORE}" />
+			<arg value="-storetype" />
+			<arg value="${codesign.STORETYPE}" />
 			<arg value="-storepass" />
 			<arg value="${codesign.STOREPASS}" />
-			<arg value="Ambire.air" />
+			<arg value="-target" />
+			<arg value="native" />
+			<arg value="Ambire.dmg" />
 			<arg value="Ambire-app.xml" />
 			<arg value="Ambire.swf" />
-			<arg value="AmbireCapture.ane" />
+			<arg value="-extdir" />
+			<arg value="ANE" />
 		</exec>
 	</target>
 
 	<target name="clean">
 		<ant dir="AmbireCapture" target="clean" />
 		<delete dir="generated" />
+		<delete dir="ANE" />
+		<delete dir="SWC" />
 		<delete>
 			<fileset dir=".">
-				<include name="Ambire.swf" />
-				<include name="Ambire.air" />
+				<include name="Ambire.exe" />
+				<include name="Ambire.dmg" />
 			</fileset>
 		</delete>
 	</target>

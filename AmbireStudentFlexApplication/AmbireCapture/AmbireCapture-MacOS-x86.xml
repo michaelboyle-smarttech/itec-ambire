@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<extension xmlns="http://ns.adobe.com/air/extension/3.1">
+	<id>AmbireCapture</id>
+	<versionNumber>1.0</versionNumber>
+	<description>Adobe AIR Native Extension to let the Ambire Student Application take screenshots.</description>
+	<platforms>
+		<platform name="MacOS-x86">
+			<applicationDeployment>
+				<nativeLibrary>AmbireCapture.framework</nativeLibrary>
+				<initializer>AmbireCaptureInitializer</initializer>
+				<finalizer>AmbireCaptureFinalizer</finalizer>
+			</applicationDeployment>
+		</platform>
+	</platforms>
+</extension>
