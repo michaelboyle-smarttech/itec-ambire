@@ -47,12 +47,9 @@ body {
 	padding: 0 0 0 0;
 }
 span#leftScrollButton {
-	position: fixed;
-	left: 0px;
-	width: 80px;
-	height: 80px;
-	top: 50%;
-	margin-top: -40px;
+	display: inline-block;
+	width: 40px;
+	height: 40px;
 	cursor: pointer;
 	background-image: url(img/left.png)
 }
@@ -60,12 +57,9 @@ span#leftScrollButton:hover {
 	background-image: url(img/left-hot.png)
 }
 span#rightScrollButton {
-	position: absolute;
-	right: 0px;
-	width: 80px;
-	height: 80px;
-	top: 50%;
-	margin-top: -40px;
+	display: inline-block;
+	width: 40px;
+	height: 40px;
 	cursor: pointer;
 	background-image: url(img/right.png);
 }
@@ -76,7 +70,7 @@ div#bottomButtons {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;
-	width: 180px;
+	width: 300px;
 	height: 60px;
 }
 span#pauseButton {
@@ -101,6 +95,17 @@ span#playButton {
 span#playButton:hover {
 	background-image: url(img/play-hot.png);
 }
+span#refreshButton {
+	display: inline-block;
+	width: 40px;
+	height: 40px;
+	cursor: pointer;
+	background-image: url(img/refresh.png);
+	background-size: contain;
+}
+span#refreshButton:hover {
+	background-image: url(img/refresh-hot.png);
+}
 span#logoutButton {
 	display: inline-block;
 	width: 40px;
@@ -116,8 +121,8 @@ div.slide {
 	padding-top: 10px;
 	display: block;
 	position: absolute;
-	left: 80px;
-	right: 80px;
+	left: 10px;
+	right: 10px;
 	top: 40px;
 	bottom: 120px;
 	overflow: hidden;
@@ -178,13 +183,24 @@ function showSlide(href, caption) {
 		g_animating = true;
 		$('#frontSlide').css('opacity', '0');
 		$('#frontSlide').css('background-image', 'url(' + href + ')');
-		$('#frontSlide > .slideCaption').text(caption);
+		if(caption) {
+			$('#frontSlide > .slideCaption').text(caption);
+			$('#frontSlide > .slideCaption').css('visibilty', 'visible');
+		} else {
+			$('#frontSlide > .slideCaption').css('visibilty', 'hidden');
+		}
 		$('#frontSlide').animate({ opacity: 1 }, 800);
 		$('#backSlide').animate({ opacity: 0 }, {
 			duration: 800,
 			complete: function() {
 				$('#backSlide').css('background-image', 'url(' + href + ')');
 				$('#backSlide > .slideCaption').text(caption);
+				if(caption) {
+					$('#backSlide > .slideCaption').text(caption);
+					$('#backSlide > .slideCaption').css('visibilty', 'visible');
+				} else {
+					$('#backSlide > .slideCaption').css('visibilty', 'hidden');
+				}
 				$('#backSlide').css('opacity', '1');
 				$('#frontSlide').css('opacity', '0');
 				g_animating = false;
@@ -273,7 +289,7 @@ function sync(settings) {
     }
 }
 
-function endPoll(data) {
+function update(data) {
     sync({
         prev: g_uploads,
         next: data,
@@ -307,11 +323,11 @@ function endPoll(data) {
     g_repoll = false;
     g_polling = false;
     if(repoll) {
-        beginPoll();
+        refresh();
     }
 }
 
-function beginPoll() {
+function refresh() {
     if(g_polling) {
         g_repoll = true;
         return;
@@ -327,7 +343,7 @@ function beginPoll() {
     $.ajax({
         url: u,
         success: function(data) {
-            endPoll(data);
+            update(data);
         },
         error: function(err) {
             console.log(err);
@@ -337,7 +353,7 @@ function beginPoll() {
 
 function run() {
 	showEmptySlide();
-	beginPoll();	
+	refresh();	
 }
 
 function pause() {
@@ -359,9 +375,7 @@ function logout() {
 <body>
 <div id="frontSlide" class="slide"><span class="slideCaption">&nbsp;</span></div>
 <div id="backSlide" class="slide"><span class="slideCaption">&nbsp;</span></div>
-<span id="leftScrollButton" onclick="prevSlide()"></span>
-<span id="rightScrollButton" onclick="nextSlide()"></span>
-<div id="bottomButtons"><span id="pauseButton" onclick="pause()"></span><span id="playButton" onclick="play()"></span><span id="logoutButton" onclick="logout()"></span></div>
+<div id="bottomButtons"><span id="leftScrollButton" onclick="prevSlide()"></span><span id="rightScrollButton" onclick="nextSlide()"></span><span id="pauseButton" onclick="pause()"></span><span id="playButton" onclick="play()"></span><span id="refreshButton" onclick="refresh()"></span><span id="logoutButton" onclick="logout()"></span></div>
 <span id="pinDisplay">PIN: <%= session.getAttribute("pin") %></span>
 <script type="text/javascript">
 $(run);

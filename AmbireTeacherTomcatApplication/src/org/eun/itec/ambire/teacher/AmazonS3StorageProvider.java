@@ -141,7 +141,7 @@ public class AmazonS3StorageProvider implements StorageProvider {
 
 	@Override
 	public void deleteFiles(Iterable<String> tokens, boolean force) {
-		if(force) {
+		if(force || true) {
 			try {
 				LinkedList<DeleteObjectsRequest.KeyVersion> keys = new LinkedList<DeleteObjectsRequest.KeyVersion>();
 				for(String token : tokens) {
