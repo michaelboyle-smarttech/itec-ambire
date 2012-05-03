@@ -107,6 +107,7 @@
 			<fileset dir=".">
 				<include name="Ambire.exe" />
 				<include name="Ambire.dmg" />
+				<include name="Ambire.swf" />
 			</fileset>
 		</delete>
 	</target>
