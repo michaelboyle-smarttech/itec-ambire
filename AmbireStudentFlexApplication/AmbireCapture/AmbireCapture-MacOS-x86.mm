@@ -39,39 +39,57 @@ FREObject AmbireCaptureGetScreenSize(FREContext ctx, void * functionData, uint32
 	CGDirectDisplayID display = CGMainDisplayID();
 	int W = (int)CGDisplayPixelsWide(display);
 	int H = (int)CGDisplayPixelsHigh(display);
-	FREObject rv = { 0 };
-	FRENewObjectFromInt32(W | (H << 16), &rv);
+	int N = W | (H << 16);
+	FREObject rv = 0;
+	FRENewObjectFromInt32(N, &rv);
 	return rv;
 }
 
 __attribute__((visibility("default")))
 FREObject AmbireCaptureCapture(FREContext ctx, void * functionData, uint32_t argc, FREObject * argv) {
-	CGDirectDisplayID display = CGMainDisplayID();
+	bool success = false;
 	FREBitmapData bd = { 0 };
-	FREAcquireBitmapData(argv[0], &bd);
-	CGImageRef image = CGDisplayCreateImage(display);
-	int W = (int)CGImageGetWidth(image);
-	int H = (int)CGImageGetHeight(image);
-	int bpp = (int)CGImageGetBitsPerPixel(image);
-	int stride = (int)CGImageGetBytesPerRow(image);
-	CGDataProviderRef provider = CGImageGetDataProvider(image);
-	CFDataRef data = CGDataProviderCopyData(provider);
-	const UInt8 * ptr = CFDataGetBytePtr(data);
-	if(bpp == 32) {
-		memmove(bd.bits32, ptr, std::min<int>(stride * H, bd.lineStride32 * 4 * bd.height));
-	} else if(bpp == 24) {
-		for(int y = 0; y < std::min<int>(bd.height, H); ++y) {
-			const UInt8 * pin = ptr + y * stride;
-			uint32_t * pout = bd.bits32 + y * bd.width;
-			for(int x = 0; x < std::min<int>(bd.width, W); ++x, ++pout, pin += 3) {
-				*pout = 0xFF000000 | (pin[0] << 16) | (pin[1] << 8) | pin[2];
+	FREResult result = FREAcquireBitmapData(argv[0], &bd);
+	if(result == FRE_OK) {
+		int w = (int)bd.width;
+		int h = (int)bd.height;
+		CGDirectDisplayID display = CGMainDisplayID();
+		CGImageRef image = CGDisplayCreateImage(display);
+		if(image) {
+			int W = (int)CGImageGetWidth(image);
+			int H = (int)CGImageGetHeight(image);
+			int bpp = (int)CGImageGetBitsPerPixel(image);
+			int stride = (int)CGImageGetBytesPerRow(image);
+			CGDataProviderRef provider = CGImageGetDataProvider(image);
+			if(provider) {
+				CFDataRef data = CGDataProviderCopyData(provider);
+				if(data) {
+					const UInt8 * ptr = CFDataGetBytePtr(data);
+					if(ptr) {
+						if(bpp == 32) {
+							memmove(bd.bits32, ptr, std::min<int>(stride * H, bd.lineStride32 * 4 * h));
+						} else if(bpp == 24) {
+							for(int y = 0; y < std::min<int>(h, H); ++y) {
+								const UInt8 * pin = ptr + y * stride;
+								uint32_t * pout = bd.bits32 + y * w;
+								for(int x = 0; x < std::min<int>(w, W); ++x, ++pout, pin += 3) {
+									*pout = 0xFF000000 | (pin[0] << 16) | (pin[1] << 8) | pin[2];
+								}
+							}
+						}
+						FREInvalidateBitmapDataRect(argv[0], 0, 0, w, h);
+						success = true;
+					}
+					CFRelease(data);
+				}
+				// DO NOT RELEASE: FOLLOW THE 'GET' RULE: CGDataProviderRelease(provider);
 			}
+			CGImageRelease(image);
 		}
+		FREReleaseBitmapData(argv[0]);
 	}
-	CGDataProviderRelease(provider);
-	CGImageRelease(image);
-	FREReleaseBitmapData(argv[0]);
-	FREObject rv = { 0 };
+	FREObject rv = 0;
+	FRENewObjectFromBool(success ? 1 : 0, &rv);
 	return rv;
 }
 
@@ -84,7 +102,7 @@ static FRENamedFunction g_functions[3] = {
 
 __attribute__((visibility("default")))
 void AmbireCaptureContextInitializer(void *extData, const uint8_t * ctxType, FREContext ctx, uint32_t * numFunctionsToSet, const FRENamedFunction** functionsToSet) {
-	*numFunctionsToSet = 1;
+	*numFunctionsToSet = 2;
 	*functionsToSet = &g_functions[0];
 }
 

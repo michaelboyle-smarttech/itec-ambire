@@ -11,7 +11,7 @@
 		8F0758AC1552358900DA23CD /* AmbireCapture-MacOS-x86.mm in Sources */ = {isa = PBXBuildFile; fileRef = 8F0758AB1552358900DA23CD /* AmbireCapture-MacOS-x86.mm */; };
 		8F0758AF1552361F00DA23CD /* ApplicationServices.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F0758AE1552361F00DA23CD /* ApplicationServices.framework */; };
 		8F0758B11552361F00DA23CD /* CoreFoundation.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F0758B01552361F00DA23CD /* CoreFoundation.framework */; };
-		8F0759941552389D00DA23CD /* Adobe AIR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F0759931552389D00DA23CD /* Adobe AIR.framework */; };
+		8F6DE31C1552530500C78E32 /* Adobe AIR.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = 8F6DE31B1552530500C78E32 /* Adobe AIR.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -21,7 +21,7 @@
 		8F0758AB1552358900DA23CD /* AmbireCapture-MacOS-x86.mm */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.cpp.objcpp; path = "AmbireCapture-MacOS-x86.mm"; sourceTree = "<group>"; };
 		8F0758AE1552361F00DA23CD /* ApplicationServices.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = ApplicationServices.framework; path = System/Library/Frameworks/ApplicationServices.framework; sourceTree = SDKROOT; };
 		8F0758B01552361F00DA23CD /* CoreFoundation.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = CoreFoundation.framework; path = System/Library/Frameworks/CoreFoundation.framework; sourceTree = SDKROOT; };
-		8F0759931552389D00DA23CD /* Adobe AIR.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Adobe AIR.framework"; path = "SDK/Flex/runtimes/air/mac/Adobe AIR.framework"; sourceTree = DEVELOPER_DIR; };
+		8F6DE31B1552530500C78E32 /* Adobe AIR.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; name = "Adobe AIR.framework"; path = "/Library/Frameworks/Adobe AIR.framework"; sourceTree = "<absolute>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -31,7 +31,7 @@
 			files = (
 				8F0758AF1552361F00DA23CD /* ApplicationServices.framework in Frameworks */,
 				8F0758B11552361F00DA23CD /* CoreFoundation.framework in Frameworks */,
-				8F0759941552389D00DA23CD /* Adobe AIR.framework in Frameworks */,
+				8F6DE31C1552530500C78E32 /* Adobe AIR.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -62,7 +62,7 @@
 			children = (
 				8F0758AE1552361F00DA23CD /* ApplicationServices.framework */,
 				8F0758B01552361F00DA23CD /* CoreFoundation.framework */,
-				8F0759931552389D00DA23CD /* Adobe AIR.framework */,
+				8F6DE31B1552530500C78E32 /* Adobe AIR.framework */,
 			);
 			name = "External Frameworks and Libraries";
 			sourceTree = "<group>";

@@ -3,12 +3,22 @@
 	<id>org.eun.itec.ambire.student.AmbireStudentFlexApplication</id>
 	<versionNumber>1.0</versionNumber>
 	<filename>Ambire</filename>
+	<name>Ambire</name>
+	<description>Lets students post screenshots, webcam images, and picture files to the Ambire ambient wall display in their classroom.</description>
+	<copyright>Copyright (C) 2012 SMART Technologies. All rights reserved.</copyright>
 	<initialWindow>
+		<title>Ambire</title>
 		<content>Ambire.swf</content>
 		<visible>true</visible>
 		<width>550</width>
 		<height>600</height>
 	</initialWindow>
+	<icon>
+		<image16x16>resources/ambire-16x16-32bpp.png</image16x16>
+		<image32x32>resources/ambire-32x32-32bpp.png</image32x32>
+		<image48x48>resources/ambire-48x48-32bpp.png</image48x48>
+		<image128x128>resources/ambire-128x128-32bpp.png</image128x128>
+	</icon>
 	<extensions>
 		<extensionID>AmbireCapture</extensionID>
 	</extensions>

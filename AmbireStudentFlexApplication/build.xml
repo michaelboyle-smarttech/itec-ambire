@@ -17,6 +17,7 @@
 			<include name="ru/inspirit/net/*.as" />
 			<include name="error.mp3" />
 			<include name="shutter.mp3" />
+			<include name="resources/ambire-*-32bpp.png" />
 			<include name="SWC/AmbireCapture.swc" />
 			<include name="ANE/AmbireCapture.ane" />
 		</srcfiles>
@@ -44,7 +45,7 @@
 						<include name="Ambire.swf" />
 						<include name="ANE/AmbireCapture.ane" />
 						<include name="Ambire-app.xml" />
-						<include name="ambire-*-24bpp.png" />
+						<include name="ambire-*-32bpp.png" />
 					</srcfiles>
 				</uptodate>
 			</and>
@@ -55,7 +56,7 @@
 						<include name="Ambire.swf" />
 						<include name="ANE/AmbireCapture.ane" />
 						<include name="Ambire-app.xml" />
-						<include name="ambire-*-24bpp.png" />
+						<include name="ambire-*-32bpp.png" />
 					</srcfiles>
 				</uptodate>
 			</and>				
@@ -77,6 +78,7 @@
 			<arg value="Ambire.exe" />
 			<arg value="Ambire-app.xml" />
 			<arg value="Ambire.swf" />
+			<arg value="resources" />
 			<arg value="-extdir" />
 			<arg value="ANE" />
 		</exec>
@@ -93,6 +95,7 @@
 			<arg value="Ambire.dmg" />
 			<arg value="Ambire-app.xml" />
 			<arg value="Ambire.swf" />
+			<arg value="resources" />
 			<arg value="-extdir" />
 			<arg value="ANE" />
 		</exec>
