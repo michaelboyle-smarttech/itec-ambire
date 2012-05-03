@@ -123,6 +123,29 @@
 	private var m_cameraStatus:int = CameraStatus.Undetermined;
 	private var m_video:Video = null;
 	
+	private function checkCameraStatus():void {
+		if(m_camera.muted) {
+			m_cameraStatus = CameraStatus.Unavailable;
+			if(m_mode == Mode.Webcam) {
+				setMode(Mode.Screenshot);
+			}
+		} else {
+			m_cameraStatus = CameraStatus.Available;
+			if(m_mode != Mode.Disconnected) {
+				webcamButton.enabled = true;
+				if(m_mode == Mode.Webcam) {
+					displayPanel.autoLayout = false;
+					videoContainer.includeInLayout = true;
+					videoContainer.visible = true;
+					staticImage.includeInLayout = false;
+					staticImage.visible = false;
+					displayPanel.autoLayout = true;
+					displayPanel.validateNow();
+				}
+			}
+		}
+	}
+	
 	private function application_creationCompleted():void {
 		nameTextField.setFocus();
 		var taskTimer:Timer = new Timer(1 * 1000, 0);
@@ -134,26 +157,7 @@
 		if(m_camera != null) {
 			m_camera.setMode(500, 400, 15.0);
 			m_camera.addEventListener(StatusEvent.STATUS, function(ev:StatusEvent):void {
-				if(m_camera.muted) {
-					m_cameraStatus = CameraStatus.Unavailable;
-					if(m_mode == Mode.Webcam) {
-						setMode(Mode.Screenshot);
-					}
-				} else {
-					m_cameraStatus = CameraStatus.Available;
-					if(m_mode != Mode.Disconnected) {
-						webcamButton.enabled = true;
-						if(m_mode == Mode.Webcam) {
-							displayPanel.autoLayout = false;
-							videoContainer.includeInLayout = true;
-							videoContainer.visible = true;
-							staticImage.includeInLayout = false;
-							staticImage.visible = false;
-							displayPanel.autoLayout = true;
-							displayPanel.validateNow();
-						}
-					}
-				}
+				checkCameraStatus();
 			});
 		}
 	}
@@ -315,6 +319,8 @@
 				staticImage.includeInLayout = false;
 				videoContainer.includeInLayout = true;
 				videoContainer.visible = true;
+			} else {
+				checkCameraStatus();
 			}
 		} else {
 			finishWebcam(false);

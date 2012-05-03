@@ -35,8 +35,20 @@
 #define _WIN32_WINNT 0x502
 #endif
 
+#ifndef _CRT_SECURE_NO_WARNINGS
+#define _CRT_SECURE_NO_WARNINGS
+#endif
+
 #include <windows.h>
 #include <FlashRuntimeExtensions.h>
+#include <stdio.h>
+#include <stdlib.h>
+
+#ifdef UNICODE
+#define _sntprintf _snwprintf
+#else
+#define _sntprintf _snprintf
+#endif
 
 FREObject __cdecl AmbireCaptureGetScreenSize(FREContext ctx, void * functionData, uint32_t argc, FREObject argv[]) {
 	POINT pt = { 0 };
@@ -46,12 +58,19 @@ FREObject __cdecl AmbireCaptureGetScreenSize(FREContext ctx, void * functionData
 	GetMonitorInfo(hMonitor, &mi);
 	int W = mi.rcMonitor.right - mi.rcMonitor.left;
 	int H = mi.rcMonitor.bottom - mi.rcMonitor.top;
-	FREObject rv = { 0 };
-	FRENewObjectFromInt32(W | (H << 16), &rv);
+	int N = W | (H << 16);
+	{
+		TCHAR buf[80] = { 0 };
+		_sntprintf(buf, sizeof(buf)/sizeof(buf[0]) - 1, TEXT("AmbireCapture.getScreenSize: W=%d, H=%d, N=%d"), W, H, N);
+		MessageBox(NULL, buf, TEXT("AmbireCapture"), MB_OK|MB_ICONINFORMATION);
+	}
+	FREObject rv = 0;
+	FRENewObjectFromInt32(N, &rv);
 	return rv;
 }
 
 FREObject __cdecl AmbireCaptureCapture(FREContext ctx, void * functionData, uint32_t argc, FREObject argv[]) {
+	bool success = false;
 	POINT pt = { 0 };
 	HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTOPRIMARY);
 	MONITORINFO mi = { 0 };
@@ -60,31 +79,66 @@ FREObject __cdecl AmbireCaptureCapture(FREContext ctx, void * functionData, uint
 	int W = mi.rcMonitor.right - mi.rcMonitor.left;
 	int H = mi.rcMonitor.bottom - mi.rcMonitor.top;
 	FREBitmapData bd = { 0 };
-	FREAcquireBitmapData(argv[0], &bd);
-	int bpp = 32;
-	int width = bd.width;
-	int height = bd.height;
-	BITMAPINFOHEADER bmi = { 0 };
-	bmi.biSize = sizeof(bmi);
-	bmi.biWidth = width;
-	bmi.biHeight = height;
-	bmi.biPlanes = 1;
-	bmi.biBitCount = bpp;
-	int stride = ((width * bpp + 31) / 32) * 4;
-	bmi.biSizeImage = stride * height;
-	void * ppvBits = 0;
-	HDC hdcDesktop = GetDC(0);
-	HDC hdcMem = CreateCompatibleDC(hdcDesktop);
-	HBITMAP hbm = CreateDIBSection(hdcMem, (const BITMAPINFO *)&bmi, 0, &ppvBits, 0, 0);
-	SelectObject(hdcMem, hbm);
-	BitBlt(hdcMem, 0, 0, W, H, hdcDesktop, mi.rcMonitor.left, mi.rcMonitor.top, SRCCOPY);
-	GdiFlush();
-	ReleaseDC(0, hdcDesktop);
-	DeleteDC(hdcMem);
-	memmove(bd.bits32, ppvBits, bmi.biSizeImage);
-	DeleteObject(hbm);
-	FREReleaseBitmapData(argv[0]);
-	FREObject rv = { 0 };
+	FREResult result = FREAcquireBitmapData(argv[0], &bd);
+	if(result == FRE_OK) {
+		int width = bd.width;
+		int height = bd.height;
+		BITMAPINFOHEADER bmi = { 0 };
+		bmi.biSize = sizeof(bmi);
+		bmi.biWidth = width;
+		bmi.biHeight = height;
+		bmi.biPlanes = 1;
+		bmi.biBitCount = 32;
+		int stride = ((width * 32 + 31) / 32) * 4;
+		bmi.biSizeImage = stride * height;
+		{
+			TCHAR buf[180] = { 0 };
+			_sntprintf(buf, sizeof(buf)/sizeof(buf[0]) - 1, TEXT("AmbireCapture.capture: width=%d, height=%d, stride=%d"), width, height, stride);
+			MessageBox(NULL, buf, TEXT("AmbireCapture"), MB_OK|MB_ICONINFORMATION);
+		}
+		void * ppvBits = 0;
+		HDC hdcDesktop = GetDC(0);
+		if(hdcDesktop) {
+			HDC hdcMem = CreateCompatibleDC(hdcDesktop);
+			if(hdcMem) {
+				HBITMAP hbm = CreateDIBSection(hdcMem, (const BITMAPINFO *)&bmi, 0, &ppvBits, 0, 0);
+				if(hbm) {
+					SelectObject(hdcMem, hbm);
+					BitBlt(hdcMem, 0, 0, W, H, hdcDesktop, mi.rcMonitor.left, mi.rcMonitor.top, SRCCOPY);
+					GdiFlush();
+					ReleaseDC(0, hdcDesktop);
+					DeleteDC(hdcMem);
+					memmove(bd.bits32, ppvBits, bmi.biSizeImage);
+					success = true;
+					DeleteObject(hbm);
+				} else {
+					DWORD dwError = GetLastError();
+					TCHAR buf[180] = { 0 };
+					_sntprintf(buf, sizeof(buf)/sizeof(buf[0]) - 1, TEXT("AmbireCapture.capture: CreateDIBSection failed; GetLastError returned 0x%08x"), dwError);
+					MessageBox(NULL, buf, TEXT("AmbireCapture"), MB_OK|MB_ICONINFORMATION);
+					DeleteDC(hdcMem);
+				}
+			} else {
+				DWORD dwError = GetLastError();
+				TCHAR buf[180] = { 0 };
+				_sntprintf(buf, sizeof(buf)/sizeof(buf[0]) - 1, TEXT("AmbireCapture.capture: CreateCompatibleDC failed; GetLastError returned 0x%08x"), dwError);
+				ReleaseDC(0, hdcDesktop);
+			}
+		} else {
+			DWORD dwError = GetLastError();
+			TCHAR buf[180] = { 0 };
+			_sntprintf(buf, sizeof(buf)/sizeof(buf[0]) - 1, TEXT("AmbireCapture.capture: GetDC failed; GetLastError returned 0x%08x"), dwError);
+			MessageBox(NULL, buf, TEXT("AmbireCapture"), MB_OK|MB_ICONINFORMATION);
+		}
+		FREReleaseBitmapData(argv[0]);
+	} else {
+		DWORD dwError = GetLastError();
+		TCHAR buf[180] = { 0 };
+		_sntprintf(buf, sizeof(buf)/sizeof(buf[0]) - 1, TEXT("AmbireCapture.capture: FREAcquireBitmapData failed; returned 0x%08x"), result);
+		MessageBox(NULL, buf, TEXT("AmbireCapture"), MB_OK|MB_ICONINFORMATION);
+	}
+	FREObject rv = 0;
+	FRENewObjectFromBool(success ? 1 : 0, &rv);
 	return rv;
 }
 
@@ -96,7 +150,7 @@ static FRENamedFunction g_functions[3] = {
 };
 
 void __cdecl AmbireCaptureContextInitializer(void *extData, const uint8_t * ctxType, FREContext ctx, uint32_t * numFunctionsToSet, const FRENamedFunction** functionsToSet) {
-	*numFunctionsToSet = 1;
+	*numFunctionsToSet = 2;
 	*functionsToSet = &g_functions[0];
 }
 

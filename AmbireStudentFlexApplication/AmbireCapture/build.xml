@@ -43,18 +43,13 @@
 		<exec executable="cl" os="Windows 7">
 			<arg value="/nologo" />
 			<arg value="/Ox" />
-			<arg value="/D_X86=1" />
-			<arg value="/DWIN32" />
-			<arg value="/D_WINNT" />
 			<arg value="/W3" />
-			<arg value="/DWINVER=0x502" />
-			<arg value="/D_WIN32_WINNT=0x502" />
-			<arg value="/D_MT" />
 			<arg value="/MT" />
+			<arg value="/LD" />
 			<arg value="/I\Developer\SDK\Flex\include" />
 			<arg value="/FeAmbireCapture.dll" />
 			<arg value="/FdAmbireCapture.pdb" />
-			<arg value="AmbireCapture-Window-x86.cpp" />
+			<arg value="AmbireCapture-Windows-x86.cpp" />
 			<arg value="/link" />
 			<arg value="kernel32.lib" />
 			<arg value="advapi32.lib" />

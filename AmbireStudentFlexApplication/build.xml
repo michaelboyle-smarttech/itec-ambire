@@ -100,12 +100,39 @@
 			<arg value="ANE" />
 		</exec>
 	</target>
+	
+	<target name="run-debug" depends="Ambire-installer">
+		<delete dir="extensions" />
+		<mkdir dir="extensions/AmbireCapture.ane" />
+		<exec executable="unzip">
+			<arg value="ANE/AmbireCapture.ane" />
+			<arg value="-d" />
+			<arg value="extensions/AmbireCapture.ane" />
+		</exec>
+		<exec executable="\Developer\SDK\Flex\bin\adl.exe" os="Windows 7">
+			<arg value="-profile" />
+			<arg value="extendedDesktop" />
+			<arg value="-extdir" />
+			<arg value="extensions" />
+			<arg value="Ambire-app.xml" />
+			<arg value="." />
+		</exec>
+		<exec executable="/Developer/SDK/Flex/bin/adl" os="Mac OS X">
+			<arg value="-profile" />
+			<arg value="extendedDesktop" />
+			<arg value="-extdir" />
+			<arg value="extensions" />
+			<arg value="Ambire-app.xml" />
+			<arg value="." />
+		</exec>
+	</target>
 
 	<target name="clean">
 		<ant dir="AmbireCapture" target="clean" />
 		<delete dir="generated" />
 		<delete dir="ANE" />
 		<delete dir="SWC" />
+		<delete dir="extensions" />
 		<delete>
 			<fileset dir=".">
 				<include name="Ambire.exe" />
