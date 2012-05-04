@@ -51,6 +51,7 @@ span#leftScrollButton {
 	width: 40px;
 	height: 40px;
 	cursor: pointer;
+	background-size: contain;
 	background-image: url(img/left.png)
 }
 span#leftScrollButton:hover {
@@ -61,6 +62,7 @@ span#rightScrollButton {
 	width: 40px;
 	height: 40px;
 	cursor: pointer;
+	background-size: contain;
 	background-image: url(img/right.png);
 }
 span#rightScrollButton:hover {
@@ -70,7 +72,7 @@ div#bottomButtons {
 	position: absolute;
 	right: 10px;
 	bottom: 10px;
-	width: 300px;
+	width: 340px;
 	height: 60px;
 }
 span#pauseButton {
@@ -111,6 +113,7 @@ span#logoutButton {
 	width: 40px;
 	height: 40px;
 	cursor: pointer;
+	margin-left: 40px;
 	background-image: url(img/logout.png);
 	background-size: contain;
 }
@@ -138,6 +141,7 @@ span.slideCaption {
 	padding-left: 5px;
 	padding-right: 5px;
 	border: 1px solid #555;
+	visibility: hidden;
 }
 div#frontSlide {
 	opacity: 0;
@@ -174,7 +178,7 @@ var g_current = null;
 var g_keepalive = new Date();
 
 function firstRun() {
-	window.setInterval(beginPoll, POLLING_INTERVAL_MILLIS);
+	window.setInterval(refresh, POLLING_INTERVAL_MILLIS);
 	window.setInterval(autoAdvance, ANIMATION_INTERVAL_MILLIS);
 }
 
@@ -212,7 +216,7 @@ function showSlide(href, caption) {
 
 function showEmptySlide() {
 	g_index = -1;
-	showSlide('img/ambire.jpg', '');
+	showSlide('img/ambire.jpg', null);
 }
 
 function showCurrentSlide() {
@@ -375,7 +379,7 @@ function logout() {
 <body>
 <div id="frontSlide" class="slide"><span class="slideCaption">&nbsp;</span></div>
 <div id="backSlide" class="slide"><span class="slideCaption">&nbsp;</span></div>
-<div id="bottomButtons"><span id="leftScrollButton" onclick="prevSlide()"></span><span id="rightScrollButton" onclick="nextSlide()"></span><span id="pauseButton" onclick="pause()"></span><span id="playButton" onclick="play()"></span><span id="refreshButton" onclick="refresh()"></span><span id="logoutButton" onclick="logout()"></span></div>
+<div id="bottomButtons"><span id="leftScrollButton" onclick="prevSlide()"></span><span id="pauseButton" onclick="pause()"></span><span id="refreshButton" onclick="refresh()"></span><span id="playButton" onclick="play()"></span><span id="rightScrollButton" onclick="nextSlide()"></span><span id="logoutButton" onclick="logout()"></span></div>
 <span id="pinDisplay">PIN: <%= session.getAttribute("pin") %></span>
 <script type="text/javascript">
 $(run);
