@@ -61,12 +61,6 @@ FREObject __cdecl AmbireCaptureGetScreenSize(FREContext ctx, void * functionData
 FREObject __cdecl AmbireCaptureCapture(FREContext ctx, void * functionData, uint32_t argc, FREObject argv[]) {
 	bool success = false;
 	POINT pt = { 0 };
-	HMONITOR hMonitor = MonitorFromPoint(pt, MONITOR_DEFAULTTOPRIMARY);
-	MONITORINFO mi = { 0 };
-	mi.cbSize = sizeof(mi);
-	GetMonitorInfo(hMonitor, &mi);
-	int W = mi.rcMonitor.right - mi.rcMonitor.left;
-	int H = mi.rcMonitor.bottom - mi.rcMonitor.top;
 	FREBitmapData bd = { 0 };
 	FREResult result = FREAcquireBitmapData(argv[0], &bd);
 	if(result == FRE_OK) {
@@ -77,8 +71,8 @@ FREObject __cdecl AmbireCaptureCapture(FREContext ctx, void * functionData, uint
 		bmi.biWidth = width;
 		bmi.biHeight = height;
 		bmi.biPlanes = 1;
-		bmi.biBitCount = 32;
-		int stride = ((width * 32 + 31) / 32) * 4;
+		bmi.biBitCount = 24;
+		int stride = ((width * 3 + 3) / 4) * 4;
 		bmi.biSizeImage = stride * height;
 		void * ppvBits = 0;
 		HDC hdcDesktop = GetDC(0);
@@ -88,11 +82,18 @@ FREObject __cdecl AmbireCaptureCapture(FREContext ctx, void * functionData, uint
 				HBITMAP hbm = CreateDIBSection(hdcMem, (const BITMAPINFO *)&bmi, 0, &ppvBits, 0, 0);
 				if(hbm) {
 					SelectObject(hdcMem, hbm);
-					BitBlt(hdcMem, 0, 0, W, H, hdcDesktop, mi.rcMonitor.left, mi.rcMonitor.top, SRCCOPY);
+					BitBlt(hdcMem, 0, 0, width, height, hdcDesktop, 0, 0, SRCCOPY);
 					GdiFlush();
 					ReleaseDC(0, hdcDesktop);
 					DeleteDC(hdcMem);
-					memmove(bd.bits32, ppvBits, bmi.biSizeImage);
+					GdiFlush();
+					for(int y = 0; y < height; ++y) {
+						const unsigned char * p = reinterpret_cast<unsigned char *>(ppvBits) + y * stride;
+						uint32_t * q = reinterpret_cast<uint32_t *>(bd.bits32) + y * bd.lineStride32;
+						for(int x = 0; x < width; ++x, p += 3, ++q) {
+							*q = 0xFF000000 | (p[2] << 16) | (p[1] << 8) | p[0];
+						}
+					}
 					success = true;
 					DeleteObject(hbm);
 				} else {
